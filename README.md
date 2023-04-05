@@ -25,3 +25,4 @@ The top bar has lists of nodes.
 - Click an input node to delete its connection.
 - Select nodes by using your mouse to draw a selection or just click on one and press delete to delete it.
 - Selected nodes can also be moved around together.
+- Hit `Execute` at the top to run your script. It will freeze while executing (I never added multithreading), it should return to normal once its processed everything.
