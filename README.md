@@ -2,17 +2,12 @@
 a node-based user-interface for NovelAI
 
 ## Installation
-Download source code.
-
-Install python.
-
-Run `pip install -r requirements.txt` (you'll need to install more than whats listed, i haven't finished making this yet).
-
-Create a file called `.env` and add in the line `key='NOVELAI_TOKEN_HERE'`.
-
-Launch main.py
-
-Run `pip install <package>` for all the missing stuff that aren't yet in the requirements file.
+1. Download source code.
+2. Install python.
+3. Run `pip install -r requirements.txt` (you'll need to install more than whats listed, i haven't finished making this yet).
+4. Create a file called `.env` and add in the line `key='NOVELAI_TOKEN_HERE'`.
+5. Launch main.py
+6. If it crashes, run `pip install <package>` for all the missing stuff that aren't yet in the requirements file. You'll want to start the program from command prompt to see the error messages.
 
 ## Usage
 The top bar has lists of nodes.
