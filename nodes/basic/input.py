@@ -1,6 +1,7 @@
 from PyQt5.QtWidgets import QGraphicsProxyWidget, QLineEdit, QMessageBox
 from nodes.node import Node
 from PyQt5.QtGui import QColor
+from PyQt5.QtCore import Qt
 
 
 class InputNode(Node):

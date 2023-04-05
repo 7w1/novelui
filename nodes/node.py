@@ -36,7 +36,7 @@ class Node(QGraphicsItem):
         # Compute the spacing between input and output ports
         total_height = self.num_input_ports * self.port_size + (self.num_input_ports + self.num_output_ports - 1) * self.port_spacing
         start_y = -total_height / 2 + self.port_size / 2
-        port_spacing = total_height / (self.num_input_ports + self.num_output_ports)
+        port_spacing = total_height / (self.num_input_ports + self.num_output_ports) - 5
         # Position input ports and add their labels to the dictionary
         for i, port in enumerate(self.input_ports):
             port_height = port.rect().height() if hasattr(port, "rect") else self.port_size

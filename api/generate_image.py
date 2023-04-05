@@ -2,8 +2,6 @@ import requests
 import os
 import time
 import textwrap
-import math
-import random
 from zipfile import ZipFile
 from io import BytesIO
 
@@ -11,7 +9,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 def generate(input: str="masterpiece", action: str="generate", model: str="nai-diffusion", width: int=512, height: int=768, scale: int=11, sampler: str="k_dpmpp_2m", steps: int=28, images: int=1, smea: bool=False, smea_dyn: bool=False, dynamic_thresholding: bool=False, controlnet_strength: int=1, legacy: bool=False, seed: int=None, negative_prompt: str="lowres"):
-    url = "https://api2.novelai.net/ai/generate-image"
+    url = "https://api.novelai.net/ai/generate-image"
     headers = {
         "Authorization": f"Bearer {os.environ['key']}",
         "Content-Type": "application/json"

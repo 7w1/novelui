@@ -38,6 +38,7 @@ class ImageOutputNode(OutputNode):
     def __init__(self, title="Image Output", color="gray"):
         super().__init__(title, color)
         self.widget.setFixedSize(100, 100)
+        self.widget.setText("")
 
     def computeOutput(self):
         input_value = self.input_ports[0].connections[0].output_port.value

@@ -1,0 +1,5 @@
+# Haven't found the time to finish this quite yet. i swear itll be done soon
+
+deepdanbooru_onnx==0.0.8
+PyQt5==5.15.9
+python-dotenv==1.0.0
