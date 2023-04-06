@@ -1,12 +1,12 @@
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
+from save_load import *
 from nodes.basic.operations import *
 from nodes.basic.input import *
 from nodes.basic.output import *
 from nodes.basic.text_operations import *
 from nodes.deepdanbooru.deepdanbooru import *
-from nodes.deepdanbooru.extract_tags import *
 from nodes.files.zip import *
 from nodes.images.open import *
 from nodes.images.save import *
@@ -14,10 +14,13 @@ from nodes.images.grid_gen import *
 from nodes.images.basic_resize import *
 from nodes.novelai.gen_img_basic import *
 from nodes.novelai.random_seed import *
+from nodes.placeholder import *
 
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
+
+        self.savinator = Savinator()
 
         self.setWindowTitle("NovelUI for NovelAI | Pre Pre Pre Pre Alpha Build")
         self.setGeometry(100, 100, 800, 600)
@@ -27,14 +30,13 @@ class MainWindow(QMainWindow):
 
         # Background grid
         grid = QPixmap(60, 60)
-        grid.fill(Qt.black)
+        grid.fill(QColor("#1D1D20"))
         painter = QPainter(grid)
         painter.setPen(QPen(QColor(100, 100, 100), 1))
         painter.drawLine(0, 2, 4, 2)
         painter.drawLine(2, 0, 2, 4)
         painter.end()  # Release the painting resources
         self.scene.setBackgroundBrush(QBrush(grid))
-
 
         self.view = QGraphicsView(self.scene, self)
         self.view.setViewport(QOpenGLWidget()) # For faster rendering
@@ -46,14 +48,14 @@ class MainWindow(QMainWindow):
         self.toolbar = QToolBar("Toolbar", self)
         self.addToolBar(self.toolbar)
 
-        self.image_menu = QMenu("Images", self)
+
+        self.image_menu = QMenu("Files", self)
+        self.image_menu.addAction("Save Node Layout", lambda: self.savinator.save())
+        self.image_menu.addAction("Load Node Layout", lambda: self.prompt_load())
         self.image_menu.addAction("Open Image", lambda: self.create_node("Open Image"))
         self.image_menu.addAction("Save Image", lambda: self.create_node("Save Image"))
         self.image_menu.addAction("Grid Generator (2x2)", lambda: self.create_node("Gen Grid"))
         self.image_menu.addAction("Resize Image (Basic)", lambda: self.create_node("Resize"))
-        self.image_action = self.toolbar.addAction(self.image_menu.menuAction())
-
-        self.image_menu = QMenu("Files", self)
         self.image_menu.addAction("Zip Images (4)", lambda: self.create_node("Zip"))
         self.image_action = self.toolbar.addAction(self.image_menu.menuAction())
 
@@ -88,8 +90,11 @@ class MainWindow(QMainWindow):
 
         self.dd_menu = QMenu("DeepDanbooru", self)
         self.dd_menu.addAction("DeepDanbooru", lambda: self.create_node("DeepDanbooru"))
-        self.dd_menu.addAction("Extract Tags", lambda: self.create_node("Tags"))
         self.dd_action = self.toolbar.addAction(self.dd_menu.menuAction())
+        
+        self.debug_menu = QMenu("Debug/Testing", self)
+        self.debug_menu.addAction("Placeholder", lambda: self.create_node("Placeholder"))
+        self.debug_action = self.toolbar.addAction(self.debug_menu.menuAction())
 
         # Add the "Execute Script" action to the toolbar
         self.execute_script_action = QAction("Execute Script", self, triggered=self.runScript)
@@ -162,13 +167,14 @@ class MainWindow(QMainWindow):
             node = ImageResizeNode()
         elif node_type == "Zip":
             node = ZipImagesNode()
-        elif node_type == "Tags":
-            node = ExtractTagsNode()
+        elif node_type == "Placeholder":
+            node = PlaceholderNode()
         else:
             return
 
         self.scene.addItem(node)
         self.nodes.append(node)
+        self.savinator.objects_to_save.append(node)
 
     def delete_selected_nodes(self):
         # Get a list of selected items
@@ -181,9 +187,23 @@ class MainWindow(QMainWindow):
             if item in self.nodes:
                 for port in item.input_ports + item.output_ports:
                     port.disconnectAll()
-                    self.scene.removeItem(port)
+                    port.parent.scene().removeItem(port)
                 self.nodes.remove(item)
-            self.scene.removeItem(item)
+                item.scene().removeItem(item)
+
+
+    def prompt_load(self):
+        # Create a file dialog to let the user select a node chart file
+        file_dialog = QFileDialog()
+        file_dialog.setFileMode(QFileDialog.ExistingFile)
+        file_dialog.setNameFilter("Node chart files (*.novelui)")
+        if file_dialog.exec_():
+            file_path = file_dialog.selectedFiles()[0]
+
+            # Load the selected file using Savinator.load()
+            if os.path.isfile(file_path):
+                self.savinator.load(file_path)
+
 
     def eventFilter(self, obj, event):
         if obj == self.view:

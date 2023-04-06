@@ -6,7 +6,7 @@ import io
 
 class DeepDanbooruNode(Node):
     def __init__(self, title="DeepDanbooru", color="purple"):
-        super().__init__(title, QColor(color).darker(200), num_input_ports=1, num_output_ports=1)
+        super().__init__(title, QColor(color).darker(200), num_input_ports=2, num_output_ports=2, port_formats=["image", "string"])
 
         self.input_ports[0].label = "image"
         self.output_ports[0].label = "tags"
@@ -16,12 +16,17 @@ class DeepDanbooruNode(Node):
     def computeOutput(self):
         input_value = self.input_ports[0].connections[0].output_port.value
 
+        threshold = self.input_ports[1].connections[0].output_port.value if self.input_ports[1].connections else 0.6
+
         try:
             image = Image.open(io.BytesIO(input_value))
         except Exception as e:
             print("Error opening image:", e)
             return None
 
-        danbooru = DeepDanbooru()
-        print(danbooru(image))
-        return danbooru(image)
+        danbooru = DeepDanbooru(threshold=threshold)
+        result = danbooru(image)
+        keys = list(result.keys())  # Extract keys from dictionary
+        keys_string = ', '.join(keys)  # Combine keys into a string separated by comma and space
+        self.output_ports[1].value = result
+        return keys_string

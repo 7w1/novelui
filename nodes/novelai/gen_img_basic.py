@@ -80,7 +80,7 @@ from api.generate_image import generate
 
 class GenerateImageBasicNode(Node):
     def __init__(self, title="Generate Image - Basic", color="orange"):
-        super().__init__(title, QColor(color).darker(150), num_input_ports=16, num_output_ports=1)
+        super().__init__(title, QColor(color).darker(150), num_input_ports=16, num_output_ports=1, port_formats=["string", "string", "string", "int", "int", "int", "string", "int", "image", "int", "int", "int", "int", "int", "int", "string", "image"])
         
         # Set labels for input ports
         self.input_ports[0].label = "input"

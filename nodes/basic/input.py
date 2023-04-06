@@ -1,7 +1,6 @@
 from PyQt5.QtWidgets import QGraphicsProxyWidget, QLineEdit, QMessageBox
 from nodes.node import Node
 from PyQt5.QtGui import QColor
-from PyQt5.QtCore import Qt
 
 
 class InputNode(Node):
@@ -31,3 +30,16 @@ class InputNode(Node):
 
     def on_input_changed(self):
         self.updateConnectedNodes()  # Update the graph when the input changes
+
+
+        
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        state["widget_text"] = self.widget.text()  # save the widget text
+        return state
+
+    def __setstate__(self, state):
+        self.__dict__.update(state)
+        self.widget = QLineEdit(state["widget_text"])  # create a new widget with the saved text
+        self.widget.returnPressed.connect(self.on_input_changed)
+        self.proxy = None  # don't restore the graphics proxy widget

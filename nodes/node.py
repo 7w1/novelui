@@ -4,7 +4,7 @@ from PyQt5.QtGui import *
 from nodes.ports import *
 
 class Node(QGraphicsItem):
-    def __init__(self, title="", color="gray", num_input_ports=1, num_output_ports=1, port_size=10):
+    def __init__(self, title="", color="gray", num_input_ports=1, num_output_ports=1, port_size=10, port_formats=["string", "string"]):
         super().__init__()
 
         self.title = title
@@ -18,6 +18,7 @@ class Node(QGraphicsItem):
         self.input_ports = []
         self.output_ports = []
         self.hovered = False
+        self.port_formats = port_formats
 
         # self.port_labels = {}  # dictionary to map port labels to port objects
 
@@ -33,30 +34,26 @@ class Node(QGraphicsItem):
         self.updatePorts()
 
     def updatePortPos(self):
-        # Compute the spacing between input and output ports
         total_height = self.num_input_ports * self.port_size + (self.num_input_ports + self.num_output_ports - 1) * self.port_spacing
         start_y = -total_height / 2 + self.port_size / 2
         port_spacing = total_height / (self.num_input_ports + self.num_output_ports) - 5
-        # Position input ports and add their labels to the dictionary
+
         for i, port in enumerate(self.input_ports):
             port_height = port.rect().height() if hasattr(port, "rect") else self.port_size
             port.setPos(-5 - self.width/2, start_y + (i + 1) * port_spacing - port_height / 2)
-            # port.label = f"input {i+1}"
             port.update()
-            # self.port_labels[port.label] = port
 
-        # Position output ports and add their labels to the dictionary
         for i, port in enumerate(self.output_ports):
             port_height = port.rect().height() if hasattr(port, "rect") else self.port_size
             port.setPos(-5 + self.width/2, start_y + (i + 1) * port_spacing - port_height / 2)
-            # port.label = f"output {i+1}"
             port.update()
-            # self.port_labels[port.label] = port
 
     def updatePorts(self):
-        # Currently set inside individual nodes | Create new input and output ports based on the current settings
-        self.input_ports = [Port(type="input", parent=self, label=f"input {i+1}") for i in range(self.num_input_ports)]
-        self.output_ports = [Port(type="output", parent=self, label=f"output {i+1}") for i in range(self.num_output_ports)]
+        # Create new input and output ports based on the current settings
+        self.input_ports = [Port(type="input", parent=self, label=f"input {i+1}", format=self.port_formats[i])
+                            for i in range(self.num_input_ports)]
+        self.output_ports = [Port(type="output", parent=self, label=f"output {i+1}", 
+                            format=self.port_formats[i+self.num_input_ports]) for i in range(self.num_output_ports)]
 
         self.updatePortPos()
 
