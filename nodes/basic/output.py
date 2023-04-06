@@ -3,8 +3,8 @@ from nodes.node import Node
 from PyQt5.QtGui import QColor, QPixmap
 
 class OutputNode(Node):
-    def __init__(self, title="Output", color="gray"):
-        super().__init__(title, QColor(color).darker(150), num_input_ports=1, num_output_ports=0)
+    def __init__(self, title="Output", color="#5F9EA0", port_formats=["string"]):
+        super().__init__(title, QColor(color).darker(150), num_input_ports=1, num_output_ports=0, port_formats=["string"])
         
         self.widget = QLabel("No input")
         
@@ -35,8 +35,8 @@ class OutputNode(Node):
 
 
 class ImageOutputNode(OutputNode):
-    def __init__(self, title="Image Output", color="gray"):
-        super().__init__(title, color)
+    def __init__(self, title="Image Output", color="#5F9EA0"):
+        super().__init__(title, color, port_formats=["image"])
         self.widget.setFixedSize(100, 100)
         self.widget.setText("")
 

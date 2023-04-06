@@ -3,8 +3,8 @@ import zipfile
 from nodes.node import Node
 
 class ZipImagesNode(Node):
-    def __init__(self, title="Zip Images", color="orange", num_input_ports=4):
-        super().__init__(title, color, num_input_ports=num_input_ports, num_output_ports=1)
+    def __init__(self, title="Zip Images", color="#66023C", num_input_ports=4, port_formats=["image", "image", "image", "image", "zip"]):
+        super().__init__(title, color, num_input_ports=num_input_ports, num_output_ports=1, port_formats=port_formats)
         self.output_ports[0].label = "zip_file"
 
     def computeOutput(self):

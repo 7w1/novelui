@@ -5,8 +5,8 @@ from nodes.node import Node
 from PyQt5.QtGui import QColor
 
 class ImageSaveNode(Node):
-    def __init__(self, title="Save Image", color="gray"):
-        super().__init__(title, QColor(color).darker(150), num_input_ports=1, num_output_ports=0)
+    def __init__(self, title="Save Image", color="#702963"):
+        super().__init__(title, QColor(color).darker(150), num_input_ports=1, num_output_ports=0, port_formats=["image"])
 
         # Create a button widget
         self.button = QPushButton("Select Location")

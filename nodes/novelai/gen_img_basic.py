@@ -79,7 +79,7 @@ from PyQt5.QtGui import QColor
 from api.generate_image import generate
 
 class GenerateImageBasicNode(Node):
-    def __init__(self, title="Generate Image - Basic", color="orange"):
+    def __init__(self, title="Generate Image - Basic", color="#330066"):
         super().__init__(title, QColor(color).darker(150), num_input_ports=16, num_output_ports=1, port_formats=["string", "string", "string", "int", "int", "int", "string", "int", "image", "int", "int", "int", "int", "int", "int", "string", "image"])
         
         # Set labels for input ports
@@ -110,7 +110,7 @@ class GenerateImageBasicNode(Node):
         self.input_ports[7].value = 28
         self.input_ports[8].value = 1
 
-        self.setSize(200, 450)
+        self.setSize(180, 280)
 
     def computeOutput(self):
         # Get input values from input ports

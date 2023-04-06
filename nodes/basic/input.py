@@ -4,8 +4,8 @@ from PyQt5.QtGui import QColor
 
 
 class InputNode(Node):
-    def __init__(self, title="Input", color="gray", input_type=float):
-        super().__init__(title, QColor(color).darker(150), num_input_ports=0, num_output_ports=1)
+    def __init__(self, title="Input", color="#5F9EA0", input_type=float, export_type="int"):
+        super().__init__(title, QColor(color).darker(150), num_input_ports=0, num_output_ports=1, port_formats=[export_type])
 
         self.input_type = input_type
 

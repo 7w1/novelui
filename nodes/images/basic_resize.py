@@ -4,8 +4,8 @@ from nodes.node import Node
 from PyQt5.QtGui import QColor
 
 class ImageResizeNode(Node):
-    def __init__(self, title="Image Resize", color="orange"):
-        super().__init__(title, QColor(color).darker(150), num_input_ports=3, num_output_ports=1)
+    def __init__(self, title="Image Resize", color="#6F2DA8"):
+        super().__init__(title, QColor(color).darker(150), num_input_ports=3, num_output_ports=1, port_formats=["int", "int", "image", "image"])
 
         self.input_ports[0].label = "width"
         self.input_ports[1].label = "height"

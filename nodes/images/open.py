@@ -5,8 +5,8 @@ from PIL import Image
 import io
 
 class ImageOpenNode(Node):
-    def __init__(self, title="Open Image", color="gray"):
-        super().__init__(title, QColor(color).darker(150), num_input_ports=0, num_output_ports=1)
+    def __init__(self, title="Open Image", color="#702963"):
+        super().__init__(title, QColor(color).darker(150), num_input_ports=0, num_output_ports=1, port_formats=["image"])
         
         # Create a button widget
         self.button = QPushButton("Open Image")

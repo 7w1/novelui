@@ -3,8 +3,8 @@ from nodes.node import Node
 from PyQt5.QtGui import QColor
 
 class AddNode(Node):
-    def __init__(self, title="Add", color="blue"):
-        super().__init__(title, QColor(color).darker(150), num_input_ports=2, num_output_ports=1)
+    def __init__(self, title="Add", color="#BF00FF"):
+        super().__init__(title, QColor(color).darker(150), num_input_ports=2, num_output_ports=1, port_formats=["int", "int", "int"])
 
         self.input_ports[0].label = "augend"
         self.input_ports[1].label = "addend"
@@ -18,8 +18,8 @@ class AddNode(Node):
 
 
 class SubtractNode(Node):
-    def __init__(self, title="Subtract", color="red"):
-        super().__init__(title, QColor(color).darker(150), num_input_ports=2, num_output_ports=1)
+    def __init__(self, title="Subtract", color="#BF00FF"):
+        super().__init__(title, QColor(color).darker(150), num_input_ports=2, num_output_ports=1, port_formats=["int", "int", "int"])
 
         self.input_ports[0].label = "minuend"
         self.input_ports[1].label = "subtrahend"
@@ -33,8 +33,8 @@ class SubtractNode(Node):
 
 
 class MultiplyNode(Node):
-    def __init__(self, title="Multiply", color="green"):
-        super().__init__(title, QColor(color).darker(150), num_input_ports=2, num_output_ports=1)
+    def __init__(self, title="Multiply", color="#BF00FF"):
+        super().__init__(title, QColor(color).darker(150), num_input_ports=2, num_output_ports=1, port_formats=["int", "int", "int"])
 
         self.input_ports[0].label = "factor 1"
         self.input_ports[1].label = "factor 2"
@@ -48,8 +48,8 @@ class MultiplyNode(Node):
 
 
 class DivideNode(Node):
-    def __init__(self, title="Divide", color="purple"):
-        super().__init__(title, QColor(color).darker(150), num_input_ports=2, num_output_ports=1)
+    def __init__(self, title="Divide", color="#BF00FF"):
+        super().__init__(title, QColor(color).darker(150), num_input_ports=2, num_output_ports=1, port_formats=["int", "int", "int"])
 
         self.input_ports[0].label = "dividend"
         self.input_ports[1].label = "divisor"

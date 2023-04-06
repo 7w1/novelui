@@ -50,8 +50,8 @@ class MainWindow(QMainWindow):
 
 
         self.image_menu = QMenu("Files", self)
-        self.image_menu.addAction("Save Node Layout", lambda: self.savinator.save())
-        self.image_menu.addAction("Load Node Layout", lambda: self.prompt_load())
+        # self.image_menu.addAction("Save Node Layout", lambda: self.savinator.save())
+        # self.image_menu.addAction("Load Node Layout", lambda: self.prompt_load())
         self.image_menu.addAction("Open Image", lambda: self.create_node("Open Image"))
         self.image_menu.addAction("Save Image", lambda: self.create_node("Save Image"))
         self.image_menu.addAction("Grid Generator (2x2)", lambda: self.create_node("Gen Grid"))
@@ -130,11 +130,11 @@ class MainWindow(QMainWindow):
         elif node_type == "Divide":
             node = DivideNode()
         elif node_type == "Input Int":
-            node = InputNode(title="Input Int", input_type=int)
+            node = InputNode(title="Input Int", input_type=int, export_type="int")
         elif node_type == "Input Float":
-            node = InputNode(title="Input Float", input_type=float)
+            node = InputNode(title="Input Float", input_type=float, export_type="int")
         elif node_type == "Input Text":
-            node = InputNode(title="Input Text", input_type=str)
+            node = InputNode(title="Input Text", input_type=str, export_type="string")
         elif node_type == "Output":
             node = OutputNode()
         elif node_type == "Image Output":

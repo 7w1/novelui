@@ -14,7 +14,7 @@ class Node(QGraphicsItem):
         self.port_size = port_size
         self.port_spacing = 20
         self.width = 100
-        self.height = 60
+        self.height = 70
         self.input_ports = []
         self.output_ports = []
         self.hovered = False
@@ -34,19 +34,20 @@ class Node(QGraphicsItem):
         self.updatePorts()
 
     def updatePortPos(self):
-        total_height = self.num_input_ports * self.port_size + (self.num_input_ports + self.num_output_ports - 1) * self.port_spacing
-        start_y = -total_height / 2 + self.port_size / 2
-        port_spacing = total_height / (self.num_input_ports + self.num_output_ports) - 5
-
+        port_offset = 5  # gap between ports
+        x_left = -self.width/2 - 5  # x position of left side
+        x_right = x_left + self.width  # x position of right side
+        y_start = -self.height / 2 + 10
+        
         for i, port in enumerate(self.input_ports):
-            port_height = port.rect().height() if hasattr(port, "rect") else self.port_size
-            port.setPos(-5 - self.width/2, start_y + (i + 1) * port_spacing - port_height / 2)
-            port.update()
-
+            port.setPos(x_left, y_start + i * (self.port_size + port_offset))
+            
+        y_start = -self.height / 2 + 10
+        
         for i, port in enumerate(self.output_ports):
-            port_height = port.rect().height() if hasattr(port, "rect") else self.port_size
-            port.setPos(-5 + self.width/2, start_y + (i + 1) * port_spacing - port_height / 2)
-            port.update()
+            port.setPos(x_right, y_start + i * (self.port_size + port_offset))
+
+
 
     def updatePorts(self):
         # Create new input and output ports based on the current settings
