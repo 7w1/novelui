@@ -15,11 +15,7 @@ def annotate(model, image):
         "Content-Type": "application/json"
     }
 
-    bytes_io = io.BytesIO(image)
-
-    # encode the image as a base64 string
-    with open(bytes_io.read(), "rb") as f:
-        image = base64.b64encode(f.read()).decode()
+    image = base64.b64encode(image)
 
     data = {"model": model, "parameters": {"image": image}}
 
