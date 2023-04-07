@@ -14,7 +14,7 @@ class AddNode(Node):
         input_values = [port.connections[0].output_port.value for port in self.input_ports]
         if None in input_values:
             return None
-        return sum(input_values)
+        return [sum(input_values)]
 
 
 class SubtractNode(Node):
@@ -29,7 +29,7 @@ class SubtractNode(Node):
         input_values = [port.connections[0].output_port.value for port in self.input_ports]
         if None in input_values:
             return None
-        return input_values[0] - input_values[1]
+        return [input_values[0] - input_values[1]]
 
 
 class MultiplyNode(Node):
@@ -44,7 +44,7 @@ class MultiplyNode(Node):
         input_values = [port.connections[0].output_port.value for port in self.input_ports]
         if None in input_values:
             return None
-        return input_values[0] * input_values[1]
+        return [input_values[0] * input_values[1]]
 
 
 class DivideNode(Node):
@@ -62,4 +62,4 @@ class DivideNode(Node):
         if input_values[1] == 0:
             QMessageBox.warning(None, "Error", "Cannot divide by zero.")
             return None
-        return input_values[0] / input_values[1]
+        return [input_values[0] / input_values[1]]

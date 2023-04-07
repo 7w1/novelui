@@ -9,4 +9,4 @@ class RandomSeedNode(Node):
         self.output_ports[0].label = "Seed"
 
     def computeOutput(self):
-        return math.floor(random.random()*(2**32)-1)
+        return [math.floor(random.random()*(2**32)-1)]

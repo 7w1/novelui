@@ -188,7 +188,7 @@ class ClusterGeneratorNode(Node):
         output = BytesIO()
         combined_image.save(output, format='PNG')
 
-        return output.getvalue()
+        return [output.getvalue()]
 
     def wrap_text(self, text, font, max_width):
         # Wrap text to fit within max_width

@@ -62,5 +62,5 @@ class ImageGridNode(Node):
             output_image.save(output, format='PNG')
             self.output_image = output.getvalue()
 
-        return self.output_image
+        return [self.output_image]
 

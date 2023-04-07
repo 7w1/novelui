@@ -23,9 +23,4 @@ class PlaceholderNode(Node):
         self.output_ports[3].label = "image"
         
     def computeOutput(self):
-        # simply passes through the values give to it
-        self.output_ports[1].value = self.input_ports.connections[1].output_port.value
-        self.output_ports[2].value = self.input_ports.connections[2].output_port.value
-        self.output_ports[3].value = self.input_ports.connections[3].output_port.value
-        # Return sets the first output port.
-        return self.input_ports.connections[0].output_port.value
+        return [self.input_ports[0].connections[0].output_port.value, self.input_ports[1].connections[1].output_port.value, self.input_ports[2].connections[2].output_port.value, self.input_ports[3].connections[3].output_port.value]

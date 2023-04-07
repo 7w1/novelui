@@ -85,4 +85,4 @@ class PromptBuilderNode(Node):
         if dynamic_threshold_mimic is not None:
             kwargs['dynamic_threshold_mimic'] = dynamic_threshold_mimic
 
-        return kwargs
+        return [kwargs]

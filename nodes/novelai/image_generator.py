@@ -14,5 +14,5 @@ class ImageGeneratorNode(Node):
         # Get input values from input ports
         prompt_builder_output = self.input_ports[0].connections[0].output_port.value
 
-        return generate(**prompt_builder_output)
+        return [generate(**prompt_builder_output)]
 

@@ -47,4 +47,4 @@ class ImageResizeNode(Node):
         # Get resized image data from memory buffer
         output_data = output_buffer.getvalue()
 
-        return output_data
+        return [output_data]

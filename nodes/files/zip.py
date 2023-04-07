@@ -30,4 +30,4 @@ class ZipImagesNode(Node):
         # Set the output value as the zip data
         self.output_ports[0].value = zip_bytes
 
-        return zip_bytes
+        return [zip_bytes]

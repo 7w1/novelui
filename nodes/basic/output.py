@@ -31,7 +31,7 @@ class OutputNode(Node):
             self.setSize(text_width + 20, self.height)
             self.proxy.resize(text_width + 20, self.proxy.size().height())
 
-        return "No input" if input_value is None else str(input_value)
+        return ["No input"] if input_value is None else [str(input_value)]
 
 
 class ImageOutputNode(OutputNode):

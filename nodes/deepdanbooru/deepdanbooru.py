@@ -29,4 +29,4 @@ class DeepDanbooruNode(Node):
         result = danbooru(image)
         keys = list(result.keys())  # Extract keys from dictionary
         keys_string = ', '.join(keys)  # Combine keys into a string separated by comma and space
-        return keys_string
+        return [keys_string]

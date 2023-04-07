@@ -305,7 +305,7 @@ class MainWindow(QMainWindow):
     def traverseNode(self, node, node_values, processed_nodes):
         if node in processed_nodes:
             return
-
+    
         # Traverse input ports and compute values of connected nodes
         for port in node.input_ports:
             if not port.connections:
@@ -313,17 +313,23 @@ class MainWindow(QMainWindow):
             
             connected_port = port.connections[0].output_port
             connected_node = connected_port.parent
-
+    
             self.traverseNode(connected_node, node_values, processed_nodes)
-
-            # Set the value of the output port of the connected node
-            connected_port.value = connected_node.value
-
-        # Compute and store output value of current node
-        node.value = node.computeOutput()
+    
+            # Set the value of each output port of the connected node
+            for out_port in connected_node.output_ports:
+                if out_port in connected_port.connections:
+                    out_port.value = port.value
+    
+        # Compute and store output values of current node for each output port
+        output_values = node.computeOutput()
+        for i, out_port in enumerate(node.output_ports):
+            out_port.value = output_values[i]
+        
         print("Node " + node.title + " processed.")
-
+    
         processed_nodes.add(node)
+
 
 
 

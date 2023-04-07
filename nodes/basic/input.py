@@ -23,7 +23,7 @@ class InputNode(Node):
     def computeOutput(self):
         try:
             value = self.input_type(self.widget.text())
-            return value
+            return [value]
         except ValueError:
             QMessageBox.warning(None, "Error", "Please enter a valid input value.")
             return None

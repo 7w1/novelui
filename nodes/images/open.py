@@ -41,4 +41,4 @@ class ImageOpenNode(Node):
 
     def computeOutput(self):
         # Return the raw PNG image data
-        return self.image_data
+        return [self.image_data]

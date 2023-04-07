@@ -2,7 +2,8 @@ import requests
 import os
 import time
 import base64
-import io
+from io import BytesIO
+from zipfile import ZipFile
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -15,37 +16,22 @@ def annotate(model, image):
         "Content-Type": "application/json"
     }
 
-    image = base64.b64encode(image)
+    image_b64 = base64.b64encode(image).decode('utf-8')
 
-    data = {"model": model, "parameters": {"image": image}}
+    data = {"model": model, "parameters": {"image": image_b64}}
 
-    print(f"Issuing request to {url} with headers: {headers} and data: {data}")
+    print(f"Issuing request to {url} with headers: {headers} and data: [redacted cuz long image stuff :P]")
 
     start_time = time.time()
     response = requests.post(url, headers=headers, json=data)
 
-    decoded_image = base64.b64decode(response.content)
-
     generation_time = time.time() - start_time
     print(f"Took {generation_time}s to generate image.")
 
-    return decoded_image
+    try:
+        image_zip = ZipFile(BytesIO(response.content))
+    except:
+        print(f"Error: {response} {response.content}")
+        return
 
-
-    # Save as file
-    # dirpath = f"output/{time.strftime('%Y-%m-%d', time.localtime())}"
-    # filename = f"{textwrap.shorten(data['input'], width=50, placeholder='...')}-{time.strftime('%H-%M-%S', time.localtime())}.png"
-    # fullpath = dirpath+"/"+filename
-# 
-    # if not os.path.exists(dirpath):
-    #     os.makedirs(dirpath)
-# 
-    # with open(fullpath, 'wb+') as f:
-    #     f.write(image_zip.read("image_0.png"))
-# 
-    # image_zip.close()
-    # f.close()
-# 
-    # print(f"Image saved as {fullpath}.")
-# 
-    # return fullpath
+    return image_zip

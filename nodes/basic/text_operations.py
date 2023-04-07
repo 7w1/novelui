@@ -13,7 +13,7 @@ class TextAddNode(Node):
         input_values = [port.connections[0].output_port.value for port in self.input_ports]
         if None in input_values:
             return None
-        return input_values[0] + input_values[1]
+        return [input_values[0] + input_values[1]]
 
 
 class TextSubtractNode(Node):
@@ -28,7 +28,7 @@ class TextSubtractNode(Node):
         input_values = [port.connections[0].output_port.value for port in self.input_ports]
         if None in input_values:
             return None
-        return input_values[0].replace(input_values[1], "")
+        return [input_values[0].replace(input_values[1], "")]
 
 
 class TextMultiplyNode(Node):
@@ -43,7 +43,7 @@ class TextMultiplyNode(Node):
         input_values = [port.connections[0].output_port.value for port in self.input_ports]
         if None in input_values:
             return None
-        return input_values[0] * input_values[1]
+        return [input_values[0] * input_values[1]]
 
 class TextCutCharactersNode(Node):
     def __init__(self, title="Text Cut Characters", color="#9932CC"):
@@ -58,7 +58,7 @@ class TextCutCharactersNode(Node):
         num_characters = self.input_ports[1].connections[0].output_port.value
         if input_string is None or num_characters is None:
             return None
-        return input_string[:num_characters]
+        return [input_string[:num_characters]]
 
 class TextCutWordsNode(Node):
     def __init__(self, title="Text Cut Words", color="#9932CC"):
@@ -74,4 +74,4 @@ class TextCutWordsNode(Node):
         if input_string is None or num_words is None:
             return None
         words = input_string.split()
-        return " ".join(words[:num_words])
+        return [" ".join(words[:num_words])]
