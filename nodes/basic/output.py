@@ -4,7 +4,7 @@ from PyQt5.QtGui import QColor, QPixmap
 
 class OutputNode(Node):
     def __init__(self, title="Output", color="#5F9EA0", port_formats=["string"]):
-        super().__init__(title, QColor(color).darker(150), num_input_ports=1, num_output_ports=0, port_formats=["string"])
+        super().__init__(title, QColor(color).darker(150), num_input_ports=1, num_output_ports=0, port_formats=port_formats)
         
         self.widget = QLabel("No input")
         

@@ -12,8 +12,11 @@ from nodes.images.open import *
 from nodes.images.save import *
 from nodes.images.grid_gen import *
 from nodes.images.basic_resize import *
-from nodes.novelai.gen_img_basic import *
+from nodes.novelai.image_generator import *
+from nodes.novelai.cluster_generator import *
+from nodes.novelai.prompt_builder import *
 from nodes.novelai.random_seed import *
+from nodes.novelai.controlnet.annotate_image import *
 from nodes.placeholder import *
 
 class MainWindow(QMainWindow):
@@ -54,9 +57,9 @@ class MainWindow(QMainWindow):
         # self.image_menu.addAction("Load Node Layout", lambda: self.prompt_load())
         self.image_menu.addAction("Open Image", lambda: self.create_node("Open Image"))
         self.image_menu.addAction("Save Image", lambda: self.create_node("Save Image"))
-        self.image_menu.addAction("Grid Generator (2x2)", lambda: self.create_node("Gen Grid"))
+        self.image_menu.addAction("Grid Generator", lambda: self.create_node("Gen Grid"))
         self.image_menu.addAction("Resize Image (Basic)", lambda: self.create_node("Resize"))
-        self.image_menu.addAction("Zip Images (4)", lambda: self.create_node("Zip"))
+        self.image_menu.addAction("Zip Images", lambda: self.create_node("Zip"))
         self.image_action = self.toolbar.addAction(self.image_menu.menuAction())
 
         self.basic_io_menu = QMenu("User Input/Output", self)
@@ -84,8 +87,10 @@ class MainWindow(QMainWindow):
 
         self.novelai_menu = QMenu("NovelAI", self)
         self.novelai_menu.addAction("Generate Image Basic", lambda: self.create_node("Gen Image"))
-        # self.novelai_menu.addAction("Prompt Builder", lambda: self.create_node("Prompt Builder"))
+        self.novelai_menu.addAction("Generate Image Cluster", lambda: self.create_node("Gen Cluster"))
+        self.novelai_menu.addAction("Prompt Builder", lambda: self.create_node("Prompt Builder"))
         self.novelai_menu.addAction("Random Seed", lambda: self.create_node("Random Seed"))
+        self.novelai_menu.addAction("ControlNet", lambda: self.create_node("ControlNet"))
         self.novelai_action = self.toolbar.addAction(self.novelai_menu.menuAction())
 
         self.dd_menu = QMenu("DeepDanbooru", self)
@@ -140,7 +145,7 @@ class MainWindow(QMainWindow):
         elif node_type == "Image Output":
             node = ImageOutputNode()
         elif node_type == "Gen Image":
-            node = GenerateImageBasicNode()
+            node = ImageGeneratorNode()
         elif node_type == "Prompt Builder":
             node = PromptBuilderNode()
         elif node_type == "Random Seed":
@@ -162,11 +167,34 @@ class MainWindow(QMainWindow):
         elif node_type == "Cut Characters":
             node = TextCutCharactersNode()
         elif node_type == "Gen Grid":
-            node = ImageGridNode()
+            dialog = GridSizeDialog()
+            if dialog.exec_() == QDialog.Accepted:
+                grid_size = dialog.get_grid_size()
+                title = f"Image Grid ({grid_size[0]}x{grid_size[1]})"
+                node = ImageGridNode(title=title, grid_size=grid_size)
+            else:
+                node = None
+        elif node_type == "Gen Cluster":
+            dialog = GridSizeDialog()
+            if dialog.exec_() == QDialog.Accepted:
+                grid_size = dialog.get_grid_size()
+                title = f"Cluster Generator ({grid_size[0]}x{grid_size[1]})"
+                node = ClusterGeneratorNode(title=title, cluster_size=grid_size)
+            else:
+                node = None
         elif node_type == "Resize":
             node = ImageResizeNode()
         elif node_type == "Zip":
-            node = ZipImagesNode()
+            dialog = ZipSizeDialog()
+            if dialog.exec_() == QDialog.Accepted:
+                zip_size = dialog.get_zip_size()
+                title = f"Zip Images ({zip_size})"
+                port_formats = ["image"] * zip_size + ["zip"]
+                node = ZipImagesNode(title=title, num_input_ports=zip_size, port_formats=port_formats)
+            else:
+                node = None
+        elif node_type == "ControlNet":
+            node = ControlNetNode()
         elif node_type == "Placeholder":
             node = PlaceholderNode()
         else:
@@ -296,6 +324,51 @@ class MainWindow(QMainWindow):
         print("Node " + node.title + " processed.")
 
         processed_nodes.add(node)
+
+
+
+class GridSizeDialog(QDialog):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle("Enter Grid Size")
+        
+        self.width_edit = QLineEdit()
+        self.height_edit = QLineEdit()
+        
+        layout = QVBoxLayout()
+        layout.addWidget(QLabel("Width:"))
+        layout.addWidget(self.width_edit)
+        layout.addWidget(QLabel("Height:"))
+        layout.addWidget(self.height_edit)
+        
+        button = QPushButton("OK")
+        button.clicked.connect(self.accept)
+        layout.addWidget(button)
+        
+        self.setLayout(layout)
+        
+    def get_grid_size(self):
+        return (int(self.width_edit.text()), int(self.height_edit.text()))
+    
+class ZipSizeDialog(QDialog):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle("Zip Files")
+        
+        self.width_edit = QLineEdit()
+        
+        layout = QVBoxLayout()
+        layout.addWidget(QLabel("Amount:"))
+        layout.addWidget(self.width_edit)
+        
+        button = QPushButton("OK")
+        button.clicked.connect(self.accept)
+        layout.addWidget(button)
+        
+        self.setLayout(layout)
+        
+    def get_zip_size(self):
+        return int(self.width_edit.text())
 
 
 

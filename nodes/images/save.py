@@ -57,5 +57,5 @@ class ImageSaveNode(Node):
             print("saved")
             with open(self.file_path, 'wb+') as f:
                 f.write(input_value)
-
+        self.file_path = None
         return None

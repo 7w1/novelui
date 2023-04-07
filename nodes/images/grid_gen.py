@@ -7,7 +7,7 @@ from nodes.node import Node
 # TODO: Fix this
 
 class ImageGridNode(Node):
-    def __init__(self, title="Image Grid 2x2", color="#4B0082", grid_size=(2, 2)):
+    def __init__(self, title="Image Grid", color="#4B0082", grid_size=(2, 2)):
         super().__init__(title, QColor(color).darker(150), num_input_ports=1, num_output_ports=1, port_formats=["zip", "image"])
 
         self.input_ports[0].label = "images"
@@ -33,32 +33,29 @@ class ImageGridNode(Node):
             num_cols = min(self.grid_size[1], (num_images + num_rows - 1) // num_rows)
 
             # Compute grid cell size
-            grid_width, grid_height = 0, 0
-            for i, image_file in enumerate(image_files):
+            cell_width, cell_height = None, None
+            for image_file in image_files:
                 with zip_file.open(image_file) as f:
                     image = Image.open(f)
-                    if i % num_cols == 0:
-                        cell_width = 0
-                        cell_height = 0
-                    cell_width = max(cell_width, image.width)
-                    cell_height = max(cell_height, image.height)
-                    if (i + 1) % num_cols == 0 or i == num_images - 1:
-                        grid_width += cell_width
-                        grid_height += cell_height
+                    if cell_width is None or image.width > cell_width:
+                        cell_width = image.width
+                    if cell_height is None or image.height > cell_height:
+                        cell_height = image.height
 
             # Create output image
-            output_image = Image.new('RGBA', (grid_width, grid_height), (255, 255, 255, 0))
-            x, y = 0, 0
+            output_width = num_cols * cell_width
+            output_height = num_rows * cell_height
+            output_image = Image.new('RGBA', (output_width, output_height), (255, 255, 255, 0))
+
+            # Paste images into output image
             for i, image_file in enumerate(image_files):
                 with zip_file.open(image_file) as f:
                     image = Image.open(f).convert('RGBA')
-                    cell_width = image.width
-                    cell_height = image.height
-                    if i % num_cols == 0:
-                        x = 0
-                        y += cell_height
+                    row = i // num_cols
+                    col = i % num_cols
+                    x = col * cell_width
+                    y = row * cell_height
                     output_image.paste(image, (x, y))
-                    x += cell_width
 
         # Convert output image to bytes
         with BytesIO() as output:
@@ -66,3 +63,4 @@ class ImageGridNode(Node):
             self.output_image = output.getvalue()
 
         return self.output_image
+
