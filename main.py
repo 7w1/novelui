@@ -14,6 +14,7 @@ from nodes.images.grid_gen import *
 from nodes.images.basic_resize import *
 from nodes.novelai.image_generator import *
 from nodes.novelai.cluster_generator import *
+from nodes.novelai.cluster_generator_advanced import *
 from nodes.novelai.prompt_builder import *
 from nodes.novelai.random_seed import *
 from nodes.novelai.controlnet.annotate_image import *
@@ -89,7 +90,8 @@ class MainWindow(QMainWindow):
 
         self.novelai_menu = QMenu("NovelAI", self)
         self.novelai_menu.addAction("Generate Image Basic", lambda: self.create_node("Gen Image"))
-        self.novelai_menu.addAction("Generate Image Cluster", lambda: self.create_node("Gen Cluster"))
+        self.novelai_menu.addAction("Generate Image Cluster Basic", lambda: self.create_node("Gen Cluster"))
+        self.novelai_menu.addAction("Generate Image Cluster Advanced", lambda: self.create_node("Gen Cluster Adv"))
         self.novelai_menu.addAction("Prompt Builder", lambda: self.create_node("Prompt Builder"))
         self.novelai_menu.addAction("Random Seed", lambda: self.create_node("Random Seed"))
         self.novelai_menu.addAction("ControlNet", lambda: self.create_node("ControlNet"))
@@ -180,6 +182,14 @@ class MainWindow(QMainWindow):
                 grid_size = dialog.get_grid_size()
                 title = f"Cluster Generator ({grid_size[0]}x{grid_size[1]})"
                 node = ClusterGeneratorNode(title=title, cluster_size=grid_size)
+            else:
+                node = None
+        elif node_type == "Gen Cluster Adv":
+            dialog = GridSizeDialog()
+            if dialog.exec_() == QDialog.Accepted:
+                grid_size = dialog.get_grid_size()
+                title = f"Advanced Cluster Generator ({grid_size[0]}x{grid_size[1]})"
+                node = AdvancedClusterGeneratorNode(title=title, cluster_size=grid_size)
             else:
                 node = None
         elif node_type == "Resize":

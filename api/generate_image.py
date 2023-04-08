@@ -103,21 +103,24 @@ def generate(input: str="masterpiece", action: str="generate", model: str="nai-d
         data_str = f" and data: {data}"
 
     headers_copy = headers.copy()
-    headers_copy['authorization'] = 'Bearer [hidden]'
+    headers_copy['Authorization'] = 'Bearer [hidden]'
 
     print(f"Issuing request to {url} with headers: {headers_copy}{data_str}")
 
-    start_time = time.time()
-    response = requests.post(url, headers=headers, json=data)
-    try:
-        image_zip = ZipFile(BytesIO(response.content))
-    except:
-        print(f"Error: {response} {response.content}")
-        return
-    generation_time = time.time() - start_time
-    print(f"Took {generation_time}s to generate image.")
-
-    return image_zip.read("image_0.png")
+    while True:
+        start_time = time.time()
+        response = requests.post(url, headers=headers, json=data)
+        try:
+            image_zip = ZipFile(BytesIO(response.content))
+        except:
+            print(f"Error: {response} {response.content}")
+            print(f"Retrying in {500} seconds...")
+            time.sleep(500)
+            continue
+        
+        generation_time = time.time() - start_time
+        print(f"Took {generation_time}s to generate image.")
+        return image_zip.read("image_0.png")
 
     # Save as file
     # dirpath = f"output/{time.strftime('%Y-%m-%d', time.localtime())}"

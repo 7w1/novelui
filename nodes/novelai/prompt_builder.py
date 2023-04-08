@@ -35,7 +35,7 @@ class PromptBuilderNode(Node):
         
         self.output_ports[0].label = "prompt"
 
-        self.setSize(180, 350)
+        self.setSize(140, 375)
 
     def computeOutput(self):
         # Get input values from input ports

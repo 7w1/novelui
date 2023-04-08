@@ -11,11 +11,9 @@ import zipfile
 
 class ClusterGeneratorNode(Node):
     def __init__(self, title="Image Generator", color="#330066", cluster_size=(3,3)):
-        super().__init__(title, QColor(color).darker(150), num_input_ports=4, num_output_ports=2, port_formats=["string", "string", "int", "int", "image", "zip"])
+        super().__init__(title, QColor(color).darker(150), num_input_ports=2, num_output_ports=2, port_formats=["string", "string", "image", "zip"])
         self.input_ports[0].label = "prompt 1"
         self.input_ports[1].label = "prompt 2"
-        self.input_ports[2].label = "header toggle"
-        self.input_ports[3].label = "increment details toggle"
         self.output_ports[0].label = "image"
         self.output_ports[1].label = "zip"
         self.grid_size = cluster_size
@@ -93,6 +91,7 @@ class ClusterGeneratorNode(Node):
             image_files.append(image_file)
 
             # Wait a bit so we don't overload the api since we're nice :P
+            print(f"Pausing for {endtime - starttime} seconds.")
             time.sleep(endtime - starttime)
 
         # Create grid of images
@@ -115,22 +114,25 @@ class ClusterGeneratorNode(Node):
 
         output_image = self.add_top_area(prompt1, prompt2, output_image)
 
-        # # Zip for second output, gives a zip of all images
-        # zip_bytes = BytesIO()
-        # with zipfile.ZipFile(zip_bytes, 'w', zipfile.ZIP_DEFLATED) as zip_obj:
-        #     for filenames in os.walk("output/cluster/temp"):
-        #         for filename in filenames:
-        #             zip_obj.write(filename)
-# 
-        # # Delete all temp files
-        # for filename in os.listdir("output/cluster/temp"):
-        #     try:
-        #         if os.path.isfile(filename):
-        #             os.remove(filename)
-        #     except Exception as e:
-        #         print(f"Error deleting file: {filename} - {e}")
+        # Zip for second output
+        folder_path = "output/cluster/temp"
+        output_buffer = BytesIO()
+        zip_file = zipfile.ZipFile(output_buffer, mode="w")
+        for file_name in os.listdir(folder_path):
+            file_path = os.path.join(folder_path, file_name)
+            if os.path.isfile(file_path):
+                zip_file.write(file_path, file_name)
 
-        return [output_image, None] # zip_bytes.getvalue()]
+        zip_file.close()
+        compressed_data = output_buffer.getvalue()
+        
+        # Delete temp files
+        for file_name in os.listdir(folder_path):
+            file_path = os.path.join(folder_path, file_name)
+            if os.path.isfile(file_path):
+                os.remove(file_path)
+
+        return [output_image, compressed_data]
 
     def add_top_area(self, prompt1, prompt2, output_image):
         # Define top area dimensions
@@ -146,16 +148,27 @@ class ClusterGeneratorNode(Node):
             subheading_text += "\nImage Generation"
         elif prompt1['action'] and prompt1['action'] == 'img2img':
             subheading_text += "\nImage to Image"
+            prompt1['image'] = '[image data]'
+            prompt2['image'] = '[image data]'
 
         if 'controlnet_model' in prompt1 and prompt1['controlnet_model'] is not None:
-            subheading_text += "\nControlNet Model: " + prompt1['parameters']['controlnet_model']
+            subheading_text += "\nControlNet Model: " + prompt1['controlnet_model']
+            prompt1['controlnet_condition'] = '[image data]'
+            prompt2['controlnet_condition'] = '[image data]'
 
         heading_color = (138, 43, 226) # purple
         subheading_color = (128, 128, 128) # gray
         text_color = (189, 195, 199)
 
         heading_width, heading_height = heading_font.getsize(heading_text)
-        subheading_width, subheading_height = subheading_font.getsize(subheading_text)
+        
+        # split the subheading text into lines and calculate the width of each line
+        subheading_lines = subheading_text.splitlines()
+        subheading_widths = [subheading_font.getsize(line)[0] for line in subheading_lines]
+
+        # find the maximum width of all the lines and use that as the subheading width
+        subheading_width = max(subheading_widths)
+        subheading_height = subheading_font.getsize(subheading_text)[1]
 
         # Calculate prompt1 and prompt2 text dimensions
         prompt1_text = ""
@@ -181,11 +194,10 @@ class ClusterGeneratorNode(Node):
         draw.text(((output_image.width-subheading_width)//2, heading_height+padding*2), subheading_text, font=subheading_font, fill=subheading_color, align="center")
 
         # Draw prompt1 text
-        draw.text((padding, heading_height+subheading_height+padding*3), prompt1_text, font=font, fill=text_color)
+        draw.text((padding, padding), prompt1_text, font=font, fill=text_color)
 
-        # Draw prompt2 text# Draw prompt2 text
-        draw.text((output_image.width-prompt2_text_width-padding, heading_height+subheading_height+padding*3), prompt2_text, font=font, fill=text_color, align="right")
-
+        # Draw prompt2 text
+        draw.text((output_image.width-padding-prompt2_text_width, padding), prompt2_text, font=font, fill=text_color, align="right")
 
         # Combine images
         combined_image = Image.new('RGBA', (output_image.width, output_image.height + top_area_height), (255, 255, 255, 0))

@@ -28,7 +28,7 @@ def annotate(model, image):
         data_str = f" and data: {data}"
 
     headers_copy = headers.copy()
-    headers_copy['authorization'] = 'Bearer [hidden]'
+    headers_copy['Authorization'] = 'Bearer [hidden]'
 
     print(f"Issuing request to {url} with headers: {headers_copy}{data_str}")
 
