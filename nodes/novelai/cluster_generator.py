@@ -7,14 +7,19 @@ from io import BytesIO
 import colorsys
 import time
 import os
+import zipfile
 
 class ClusterGeneratorNode(Node):
     def __init__(self, title="Image Generator", color="#330066", cluster_size=(3,3)):
-        super().__init__(title, QColor(color).darker(150), num_input_ports=2, num_output_ports=1, port_formats=["string", "string", "image"])
+        super().__init__(title, QColor(color).darker(150), num_input_ports=4, num_output_ports=2, port_formats=["string", "string", "int", "int", "image", "zip"])
         self.input_ports[0].label = "prompt 1"
         self.input_ports[1].label = "prompt 2"
+        self.input_ports[2].label = "header toggle"
+        self.input_ports[3].label = "increment details toggle"
+        self.output_ports[0].label = "image"
+        self.output_ports[1].label = "zip"
         self.grid_size = cluster_size
-        self.setSize(180, 280)
+        self.setSize(150, self.height)
 
     def computeOutput(self):
         # Get input values from input ports
@@ -110,74 +115,77 @@ class ClusterGeneratorNode(Node):
 
         output_image = self.add_top_area(prompt1, prompt2, output_image)
 
-        return output_image
+        # # Zip for second output, gives a zip of all images
+        # zip_bytes = BytesIO()
+        # with zipfile.ZipFile(zip_bytes, 'w', zipfile.ZIP_DEFLATED) as zip_obj:
+        #     for filenames in os.walk("output/cluster/temp"):
+        #         for filename in filenames:
+        #             zip_obj.write(filename)
+# 
+        # # Delete all temp files
+        # for filename in os.listdir("output/cluster/temp"):
+        #     try:
+        #         if os.path.isfile(filename):
+        #             os.remove(filename)
+        #     except Exception as e:
+        #         print(f"Error deleting file: {filename} - {e}")
 
-
-    
+        return [output_image, None] # zip_bytes.getvalue()]
 
     def add_top_area(self, prompt1, prompt2, output_image):
         # Define top area dimensions
-        top_area_height = 100
-        top_area_width = output_image.width
-
-        # Create top area image
-        top_area_image = Image.new('RGBA', (top_area_width, top_area_height), (29, 29, 32, 255))
-
-        # Define font and text color
         font = ImageFont.truetype('arial.ttf', 8)
+        padding = 5
+        heading_font = ImageFont.truetype('arial.ttf', 20)
+        subheading_font = ImageFont.truetype('arial.ttf', 12)
+
+        heading_text = "NovelUI for NovelAI"
+        subheading_text = "Made by 7w1"
+
+        if 'action' not in prompt1 or prompt1['action'] == 'generate':
+            subheading_text += "\nImage Generation"
+        elif prompt1['action'] and prompt1['action'] == 'img2img':
+            subheading_text += "\nImage to Image"
+
+        if 'controlnet_model' in prompt1 and prompt1['controlnet_model'] is not None:
+            subheading_text += "\nControlNet Model: " + prompt1['parameters']['controlnet_model']
+
+        heading_color = (138, 43, 226) # purple
+        subheading_color = (128, 128, 128) # gray
         text_color = (189, 195, 199)
 
-        # Define default values
-        defaults = {
-            "input": "masterpiece",
-            "action": "generate",
-            "model": "nai-diffusion",
-            "width": 512,
-            "height": 768,
-            "scale": 11,
-            "sampler": "k_dpmpp_2m",
-            "steps": 28,
-            "smea": False,
-            "smea_dyn": False,
-            "dynamic_thresholding": False,
-            "controlnet_strength": 1,
-            "legacy": False,
-            "seed": None,
-            "negative_prompt": "lowres",
-            "dynamic_thresholding_percentile": 0.999,
-            "dynamic_threshold_mimic": 10.0
-        }
+        heading_width, heading_height = heading_font.getsize(heading_text)
+        subheading_width, subheading_height = subheading_font.getsize(subheading_text)
 
-        # Fill missing values with defaults
-        prompt1 = {**defaults, **prompt1}
-        prompt2 = {**defaults, **prompt2}
+        # Calculate prompt1 and prompt2 text dimensions
+        prompt1_text = ""
+        for key, value in prompt1.items():
+            prompt1_text += f"{key}: {value}\n"
+        prompt1_text_width, prompt1_text_height = font.getsize(prompt1_text)
 
-        # Define max text width
-        max_text_width = (top_area_width - 40) // 2
+        prompt2_text = ""
+        for key, value in prompt2.items():
+            prompt2_text += f"{key}: {value}\n"
+        prompt2_text_width, prompt2_text_height = font.getsize(prompt2_text)
 
-        # Add prompt 1 text
-        prompt1_text = "Input: {}, Action: {}, Model: {}, Width: {}, Height: {}, Scale: {}, Sampler: {}, Steps: {}, Smea: {}, Smea_dyn: {}, Dynamic_thresholding: {}, Controlnet_strength: {}, Legacy: {}, Seed: {}, Negative_prompt: {}, Dynamic_thresholding_percentile: {}, Dynamic_threshold_mimic: {}".format(
-            prompt1["input"], prompt1["action"], prompt1["model"], prompt1["width"], prompt1["height"], prompt1["scale"], prompt1["sampler"], prompt1["steps"], prompt1["smea"], prompt1["smea_dyn"], prompt1["dynamic_thresholding"], prompt1["controlnet_strength"], prompt1["legacy"], prompt1["seed"], prompt1["negative_prompt"], prompt1["dynamic_thresholding_percentile"], prompt1["dynamic_threshold_mimic"])
-        prompt1_lines = self.wrap_text(prompt1_text, font, max_text_width)
-        prompt1_y = 20
-        for line in prompt1_lines:
-            line_width, line_height = font.getsize(line)
-            prompt1_x = 20
-            prompt1_draw = ImageDraw.Draw(top_area_image)
-            prompt1_draw.text((prompt1_x, prompt1_y), line, font=font, fill=text_color)
-            prompt1_y += line_height + 5
+        # Calculate top area height
+        max_text_width = max(prompt1_text_width, prompt2_text_width)
+        top_area_height = heading_height + subheading_height + prompt1_text_height*prompt1_text.count("\n") + padding*4
 
-        # Add prompt 2 text
-        prompt2_text = "Input: {}, Action: {}, Model: {}, Width: {}, Height: {}, Scale: {}, Sampler: {}, Steps: {}, Smea: {}, Smea_dyn: {}, Dynamic_thresholding: {}, Controlnet_strength: {}, Legacy: {}, Seed: {}, Negative_prompt: {}, Dynamic_thresholding_percentile: {}, Dynamic_threshold_mimic: {}".format(
-            prompt2["input"], prompt2["action"], prompt2["model"], prompt2["width"], prompt2["height"], prompt2["scale"], prompt2["sampler"], prompt2["steps"], prompt2["smea"], prompt2["smea_dyn"], prompt2["dynamic_thresholding"], prompt2["controlnet_strength"], prompt2["legacy"], prompt2["seed"], prompt2["negative_prompt"], prompt2["dynamic_thresholding_percentile"], prompt2["dynamic_threshold_mimic"])
-        prompt2_lines = self.wrap_text(prompt2_text, font, max_text_width)
-        prompt2_y = 20
-        for line in prompt2_lines:
-            line_width, line_height = font.getsize(line)
-            prompt2_x = top_area_width - line_width - 20
-            prompt2_draw = ImageDraw.Draw(top_area_image)
-            prompt2_draw.text((prompt2_x, prompt2_y), line, font=font, fill=text_color)
-            prompt2_y += line_height + 5
+        # Create top area image
+        top_area_image = Image.new('RGBA', (output_image.width, top_area_height), (29, 29, 32, 255))
+        draw = ImageDraw.Draw(top_area_image)
+
+        # Draw headings# Draw headings
+        draw.text(((output_image.width-heading_width)//2, padding), heading_text, font=heading_font, fill=heading_color, align="center")
+        draw.text(((output_image.width-subheading_width)//2, heading_height+padding*2), subheading_text, font=subheading_font, fill=subheading_color, align="center")
+
+        # Draw prompt1 text
+        draw.text((padding, heading_height+subheading_height+padding*3), prompt1_text, font=font, fill=text_color)
+
+        # Draw prompt2 text# Draw prompt2 text
+        draw.text((output_image.width-prompt2_text_width-padding, heading_height+subheading_height+padding*3), prompt2_text, font=font, fill=text_color, align="right")
+
 
         # Combine images
         combined_image = Image.new('RGBA', (output_image.width, output_image.height + top_area_height), (255, 255, 255, 0))
@@ -188,19 +196,6 @@ class ClusterGeneratorNode(Node):
         output = BytesIO()
         combined_image.save(output, format='PNG')
 
-        return [output.getvalue()]
+        return output.getvalue()
 
-    def wrap_text(self, text, font, max_width):
-        # Wrap text to fit within max_width
-        lines = []
-        words = text.split()
-        current_line = words[0]
-        for word in words[1:]:
-            if font.getsize(current_line + ' ' + word)[0] <= max_width:
-                current_line += ' ' + word
-            else:
-                lines.append(current_line)
-                current_line = word
-        lines.append(current_line)
-        return lines
 

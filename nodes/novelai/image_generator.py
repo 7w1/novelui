@@ -7,8 +7,7 @@ class ImageGeneratorNode(Node):
         super().__init__(title, QColor(color).darker(150), num_input_ports=1, num_output_ports=1, port_formats=["string", "image"])
         
         self.input_ports[0].label = "prompt"
-
-        self.setSize(180, 280)
+        self.setSize(150, self.height)
 
     def computeOutput(self):
         # Get input values from input ports

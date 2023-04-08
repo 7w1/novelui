@@ -20,7 +20,17 @@ def annotate(model, image):
 
     data = {"model": model, "parameters": {"image": image_b64}}
 
-    print(f"Issuing request to {url} with headers: {headers} and data: [redacted cuz long image stuff :P]")
+    if 'image' in data['parameters']:
+        data_copy = data.copy()
+        data_copy['image'] = '[image data]'
+        data_str = f" and data: {data_copy}"
+    else:
+        data_str = f" and data: {data}"
+
+    headers_copy = headers.copy()
+    headers_copy['authorization'] = 'Bearer [hidden]'
+
+    print(f"Issuing request to {url} with headers: {headers_copy}{data_str}")
 
     start_time = time.time()
     response = requests.post(url, headers=headers, json=data)

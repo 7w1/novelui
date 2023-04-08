@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QGraphicsProxyWidget, QLineEdit, QMessageBox
+from PyQt5.QtWidgets import QGraphicsProxyWidget, QLineEdit, QPlainTextEdit
 from nodes.node import Node
 from PyQt5.QtGui import QColor
 
@@ -10,28 +10,31 @@ class InputNode(Node):
         self.input_type = input_type
 
         # Create the widget
-        self.widget = QLineEdit()
-        self.widget.returnPressed.connect(self.on_input_changed)
+        if self.input_type == str:
+            self.widget = QPlainTextEdit()
+            self.widget.setFixedSize(200, 120)
+            self.height = 160
+            self.posY = -50
+            self.widget.setPlaceholderText("Enter some text...")
+        else:
+            self.widget = QLineEdit()
+            self.posY = -1
+            self.widget.setPlaceholderText("Enter a number...")
+            self.height -= 10
 
         # Set up the graphics proxy widget
         self.proxy = QGraphicsProxyWidget(self)
         self.proxy.setWidget(self.widget)
-        self.proxy.setPos(-100, 0)
+        self.proxy.setPos(-100, self.posY)
 
         self.setSize(220, self.height)
 
     def computeOutput(self):
         try:
-            value = self.input_type(self.widget.text())
+            value = self.input_type(self.widget.toPlainText() if self.input_type == str else self.widget.text())
             return [value]
         except ValueError:
-            QMessageBox.warning(None, "Error", "Please enter a valid input value.")
             return None
-
-    def on_input_changed(self):
-        self.updateConnectedNodes()  # Update the graph when the input changes
-
-
         
     def __getstate__(self):
         state = self.__dict__.copy()

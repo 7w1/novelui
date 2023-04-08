@@ -7,7 +7,7 @@ from io import BytesIO
 from dotenv import load_dotenv
 load_dotenv()
 
-def generate(input: str="masterpiece", action: str="generate", model: str="nai-diffusion", width: int=512, height: int=768, scale: int=11, sampler: str="k_dpmpp_2m", steps: int=28, n_samples: int=1, smea: bool=False, smea_dyn: bool=False, dynamic_thresholding: bool=False, controlnet_strength: int=1, controlnet_model: str=None, controlnet_condition=None, legacy: bool=False, image=None, seed: int=1, extra_noise_seed: int=1, negative_prompt: str="lowres", dynamic_thresholding_percentile: float=0.999, dynamic_threshold_mimic: float=10.0):
+def generate(input: str="masterpiece", action: str="generate", model: str="nai-diffusion", width: int=512, height: int=768, scale: int=11, sampler: str="k_dpmpp_2m", steps: int=28, n_samples: int=1, smea: bool=False, smea_dyn: bool=False, dynamic_thresholding: bool=False, controlnet_strength: int=1, controlnet_model: str=None, controlnet_condition=None, legacy: bool=False, image=None, seed: int=1, extra_noise_seed: int=1, negative_prompt: str="lowres", dynamic_thresholding_percentile: float=0.999, dynamic_threshold_mimic: int=10, noise: float=0.2, strength: float=0.7):
     url = "https://api.novelai.net/ai/generate-image"
     headers = {
         "Authorization": f"Bearer {os.environ['key']}",
@@ -68,6 +68,8 @@ def generate(input: str="masterpiece", action: str="generate", model: str="nai-d
             "model": model,
             "action": action,
             "parameters": {
+                "noise": noise,
+                "strength": strength,
                 "width": width,
                 "height": height,
                 "scale": scale,
@@ -88,8 +90,22 @@ def generate(input: str="masterpiece", action: str="generate", model: str="nai-d
         }
     else:
         return
+    
+    if 'image' in data['parameters']:
+        data_copy = data.copy()
+        data_copy['parameters']['image'] = '[image data]'
+        data_str = f" and data: {data_copy}"
+    elif 'controlnet_condition' in data['parameters']:
+        data_copy = data.copy()
+        data_copy['parameters']['controlnet_condition'] = '[image data]'
+        data_str = f" and data: {data_copy}"
+    else:
+        data_str = f" and data: {data}"
 
-    print(f"Issuing request to {url} with headers: {headers} and data: {data}")
+    headers_copy = headers.copy()
+    headers_copy['authorization'] = 'Bearer [hidden]'
+
+    print(f"Issuing request to {url} with headers: {headers_copy}{data_str}")
 
     start_time = time.time()
     response = requests.post(url, headers=headers, json=data)

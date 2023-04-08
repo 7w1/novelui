@@ -1,9 +1,11 @@
 from nodes.node import Node
 from PyQt5.QtGui import QColor
+import base64
+import math
 
 class PromptBuilderNode(Node):
     def __init__(self, title="Prompt Builder", color="#330066"):
-        super().__init__(title, QColor(color).darker(150), num_input_ports=22, num_output_ports=1, port_formats=["string", "string", "string", "int", "int", "int", "string", "int", "image", "int", "int", "int", "string", "image", "int", "int", "image", "int", "int", "string", "int", "int", "string"])
+        super().__init__(title, QColor(color).darker(150), num_input_ports=24, num_output_ports=1, port_formats=["string", "string", "string", "int", "int", "int", "string", "int", "int", "int", "int", "int", "int", "string", "image", "int", "image", "int", "int", "string", "int", "int", "int", "int", "string"])
         
         # Set labels for input ports
         self.input_ports[0].label = "input"
@@ -28,16 +30,18 @@ class PromptBuilderNode(Node):
         self.input_ports[19].label = "negative_prompt"
         self.input_ports[20].label = "dynamic_thresholding_percentile"
         self.input_ports[21].label = "dynamic_threshold_mimic"
+        self.input_ports[22].label = "noise"
+        self.input_ports[23].label = "strength"
         
         self.output_ports[0].label = "prompt"
 
-        self.setSize(180, 280)
+        self.setSize(180, 350)
 
     def computeOutput(self):
         # Get input values from input ports
         input_values = [port.connections[0].output_port.value if port.connections else None for port in self.input_ports]
 
-        input, action, model, width, height, scale, sampler, steps, n_samples, smea, smea_dyn, dynamic_thresholding, controlnet_strength, controlnet_model, controlnet_condition, legacy, image, seed, extra_noise_seed, negative_prompt, dynamic_thresholding_percentile, dynamic_threshold_mimic = input_values
+        input, action, model, width, height, scale, sampler, steps, n_samples, smea, smea_dyn, dynamic_thresholding, controlnet_strength, controlnet_model, controlnet_condition, legacy, image, seed, extra_noise_seed, negative_prompt, dynamic_thresholding_percentile, dynamic_threshold_mimic, noise, strength = input_values
 
         kwargs = {}
         if input is not None:
@@ -47,42 +51,46 @@ class PromptBuilderNode(Node):
         if model is not None:
             kwargs['model'] = model
         if width is not None: 
-            kwargs['width'] = width
+            kwargs['width'] = math.floor(width)
         if height is not None:
-            kwargs['height'] = height
+            kwargs['height'] = math.floor(height)
         if scale is not None:
-            kwargs['scale'] = scale
+            kwargs['scale'] = math.floor(scale)
         if sampler is not None:
             kwargs['sampler'] = sampler
         if steps is not None:
-            kwargs['steps'] = steps
+            kwargs['steps'] = math.floor(steps)
         if n_samples is not None:
-            kwargs['n_samples'] = n_samples
+            kwargs['n_samples'] = math.floor(n_samples)
         if smea is not None:
-            kwargs['smea'] = bool(smea)
+            kwargs['smea'] = not not math.floor(smea)
         if smea_dyn is not None:
-            kwargs['smea_dyn'] = bool(smea_dyn)
+            kwargs['smea_dyn'] = not not math.floor(smea_dyn)
         if dynamic_thresholding is not None:
-            kwargs['dynamic_thresholding'] = bool(dynamic_thresholding)
+            kwargs['dynamic_thresholding'] = not not math.floor(dynamic_thresholding)
         if controlnet_strength is not None:
             kwargs['controlnet_strength'] = controlnet_strength
         if controlnet_model is not None:
             kwargs['controlnet_model'] = controlnet_model
         if controlnet_condition is not None:
-            kwargs['controlnet_condition'] = controlnet_condition
+            kwargs['controlnet_condition'] = base64.b64encode(controlnet_condition).decode('utf-8')
         if legacy is not None:
-            kwargs['legacy'] = bool(legacy)
+            kwargs['legacy'] = not not math.floor(legacy)
         if image is not None:
-            kwargs['image'] = image
+            kwargs['image'] = base64.b64encode(image).decode('utf-8')
         if seed is not None:
-            kwargs['seed'] = seed
+            kwargs['seed'] = math.floor(seed)
         if extra_noise_seed is not None:
-            kwargs['extra_noise_seed'] = extra_noise_seed
+            kwargs['extra_noise_seed'] = math.floor(extra_noise_seed)
         if negative_prompt is not None:
             kwargs['negative_prompt'] = negative_prompt
         if dynamic_thresholding_percentile is not None:
             kwargs['dynamic_thresholding_percentile'] = dynamic_thresholding_percentile
         if dynamic_threshold_mimic is not None:
-            kwargs['dynamic_threshold_mimic'] = dynamic_threshold_mimic
+            kwargs['dynamic_threshold_mimic'] = math.floor(dynamic_threshold_mimic)
+        if noise is not None:
+            kwargs['noise'] = noise
+        if strength is not None:
+            kwargs['strength'] = strength
 
         return [kwargs]

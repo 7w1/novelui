@@ -29,8 +29,8 @@ class ImageGridNode(Node):
 
             # Compute grid dimensions
             num_images = len(image_files)
-            num_rows = min(self.grid_size[0], num_images)
-            num_cols = min(self.grid_size[1], (num_images + num_rows - 1) // num_rows)
+            num_rows = min(self.grid_size[1], num_images)
+            num_cols = min(self.grid_size[0], (num_images + num_rows - 1) // num_rows)
 
             # Compute grid cell size
             cell_width, cell_height = None, None

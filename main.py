@@ -62,13 +62,15 @@ class MainWindow(QMainWindow):
         self.image_menu.addAction("Zip Images", lambda: self.create_node("Zip"))
         self.image_action = self.toolbar.addAction(self.image_menu.menuAction())
 
-        self.basic_io_menu = QMenu("User Input/Output", self)
-        self.basic_io_menu.addAction("Input Int", lambda: self.create_node("Input Int"))
-        self.basic_io_menu.addAction("Input Float", lambda: self.create_node("Input Float"))
+        self.basic_io_menu = QMenu("User Input", self)
+        self.basic_io_menu.addAction("Input Number", lambda: self.create_node("Input Number"))
         self.basic_io_menu.addAction("Input Text", lambda: self.create_node("Input Text"))
-        self.basic_io_menu.addAction("Output", lambda: self.create_node("Output"))
-        self.basic_io_menu.addAction("Image Output", lambda: self.create_node("Image Output"))
         self.basic_io_action = self.toolbar.addAction(self.basic_io_menu.menuAction())
+
+        self.display_menu = QMenu("Display", self)
+        self.display_menu.addAction("Output", lambda: self.create_node("Output"))
+        self.display_menu.addAction("Image Output", lambda: self.create_node("Image Output"))
+        self.display_action = self.toolbar.addAction(self.display_menu.menuAction())
 
         self.basic_math_menu = QMenu("Math", self)
         self.basic_math_menu.addAction("Add", lambda: self.create_node("Add"))
@@ -134,10 +136,8 @@ class MainWindow(QMainWindow):
             node = MultiplyNode()
         elif node_type == "Divide":
             node = DivideNode()
-        elif node_type == "Input Int":
-            node = InputNode(title="Input Int", input_type=int, export_type="int")
-        elif node_type == "Input Float":
-            node = InputNode(title="Input Float", input_type=float, export_type="int")
+        elif node_type == "Input Number":
+            node = InputNode(title="Input Number", input_type=float, export_type="int")
         elif node_type == "Input Text":
             node = InputNode(title="Input Text", input_type=str, export_type="string")
         elif node_type == "Output":
