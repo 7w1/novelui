@@ -70,6 +70,7 @@ class MainWindow(QMainWindow):
         self.basic_io_menu = QMenu("User Input", self)
         self.basic_io_menu.addAction("Input Number", lambda: self.create_node("Input Number"))
         self.basic_io_menu.addAction("Input Text", lambda: self.create_node("Input Text"))
+        self.basic_io_menu.addAction("Input Boolean", lambda: self.create_node("Input Boolean"))
         self.basic_io_action = self.toolbar.addAction(self.basic_io_menu.menuAction())
 
         self.display_menu = QMenu("Display", self)
@@ -99,6 +100,16 @@ class MainWindow(QMainWindow):
         self.novelai_menu.addAction("Prompt Builder", lambda: self.create_node("Prompt Builder"))
         self.novelai_menu.addAction("Random Seed", lambda: self.create_node("Random Seed"))
         self.novelai_menu.addAction("ControlNet", lambda: self.create_node("ControlNet"))
+        self.presets_menu = QMenu("Presets", self.novelai_menu)
+        self.novelai_menu.addMenu(self.presets_menu)
+        self.presets_menu.addAction("ControlNet Models", lambda: self.create_node("ControlNet Models"))
+        self.presets_menu.addAction("Image Generation Models", lambda: self.create_node("Image Generation Models"))
+        self.presets_menu.addAction("Image Generation Samplers", lambda: self.create_node("Image Generation Samplers"))
+        self.uc_menu = QMenu("Image Generation UC Prompts", self.presets_menu)
+        self.presets_menu.addMenu(self.uc_menu)
+        self.uc_menu.addAction("Curated UC Prompts", lambda: self.create_node("Curated UC Prompts"))
+        self.uc_menu.addAction("Full UC Prompts", lambda: self.create_node("Full UC Prompts"))
+        self.uc_menu.addAction("Furry UC Prompts", lambda: self.create_node("Furry UC Prompts"))
         self.novelai_action = self.toolbar.addAction(self.novelai_menu.menuAction())
 
         self.dd_menu = QMenu("DeepDanbooru", self)
@@ -218,6 +229,25 @@ class MainWindow(QMainWindow):
             node = ControlNetNode()
         elif node_type == "Placeholder":
             node = PlaceholderNode()
+        elif node_type == "ControlNet Models":
+            node = DropdownNode(output="model", title="ControlNet Models", options=["Palette Lock", "Form Lock", "Scribble", "Building Control", "Landscaper"], values=["hed", "midas", "fake_scribble", "mlsd", "uniformer"], export_type="string")
+        elif node_type == "Image Generation Models":
+            node = DropdownNode(output="model", title="Image Generation Models", options=["Curated", "Full", "Furry"], values=["safe-diffusion", "nai-diffusion", "nai-diffusion-furry"], export_type="string")
+        elif node_type == "Image Generation Samplers":
+            node = DropdownNode(output="sampler", title="Image Generation Samplers",
+                                options=["k_lms", "k_euler", "k_euler_ancestral", "k_heun", "ddim", "k_dpmpp_2m", "k_dpmpp_2s_ancestral", "k_dpmpp_sde", "k_dpm_2", "k_dpm_2_ancestral", "k_dpm_adaptive", "k_dpm_fast"],
+                                values=["k_lms", "k_euler", "k_euler_ancestral", "k_heun", "ddim", "k_dpmpp_2m", "k_dpmpp_2s_ancestral", "k_dpmpp_sde", "k_dpm_2", "k_dpm_2_ancestral", "k_dpm_adaptive", "k_dpm_fast"],
+                                export_type="string")
+        elif node_type == "Input Boolean":
+            node = DropdownNode(output="true/false", title="Input Boolean", options=["True", "False"], values=[1, 0])
+        elif node_type == "Curated UC Prompts":
+            node = DropdownNode(output="prompt string", title="Curated UC Prompts", options=["Low Quality, Bad Anatomy", "Low Quality", "None"], values=["nsfw, lowres, bad anatomy, bad hands, text, error, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, twitter username, blurry", "nsfw, lowres, text, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, twitter username, blurry", "lowres"], export_type="string")
+        elif node_type == "Full UC Prompts":
+            node = DropdownNode(output="prompt string", title="Full UC Prompts", options=["Low Quality, Bad Anatomy", "Low Quality", "None"], values=["lowres, bad anatomy, bad hands, text, error, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry", "lowres, text, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry", "lowres"], export_type="string")
+        elif node_type == "Furry UC Prompts":
+            node = DropdownNode(output="prompt string", title="Furry UC Prompts", options=["Low Quality", "None"], values=["nsfw, worst quality, low quality, what has science done, what, nightmare fuel, eldritch horror, where is your god now, why", "low res"], export_type="string")
+        elif node_type == "Action":
+            node = DropdownNode(output="action", title="Action", options=["generate", "img2img"], values=["generate", "img2img"], export_type="string")
         else:
             return
 
@@ -325,12 +355,12 @@ class MainWindow(QMainWindow):
         self.worker.finished.connect(self.on_worker_finished)
         self.worker.progress.connect(self.progress_popup.update_progress)
         self.worker.error.connect(self.handle_error)
-        self.worker.progress.connect(self.progress_popup.update_progress)
 
         # Start worker thread
         self.worker.start()
 
     def on_worker_finished(self):
+        self.worker.progress.emit(100)
         self.execute_script_action.setEnabled(True)
 
     def handle_error(self, error_message):

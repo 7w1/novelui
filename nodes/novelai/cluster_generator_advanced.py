@@ -227,7 +227,7 @@ class AdvancedClusterGeneratorNode(Node):
 
         # Calculate top area height and width
         max_text_width = max(base_prompt_text_width, col_prompt_text_width)
-        top_area_height = max(heading_height + subheading_height, base_prompt_text_height*base_prompt_text.count("\n"), col_prompt_text_height*col_prompt_text.count("\n")) + padding*4
+        top_area_height = max(heading_height + subheading_height + padding*2, base_prompt_text_height*base_prompt_text.count("\n"), col_prompt_text_height*col_prompt_text.count("\n")) + padding*4
 
         # Create top area image
         top_area_image = Image.new('RGBA', (output_image.width, top_area_height), (29, 29, 32, 255))

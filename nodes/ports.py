@@ -147,17 +147,19 @@ class Port(QGraphicsItem):
         
         # Draw the label
         font = QFont("Arial", 9)
+
         fm = QFontMetrics(font)
-        label_width = fm.width(self.label)
+        label_width = fm.boundingRect(self.label).width()
         
         out_color = QColor("#BDC3C7")
+        painter.setFont(font)
         painter.setPen(QPen(out_color, 2))
-# 
+
         if self.type == "output":
-            pos = QPointF(self.width + 5, self.height/2 + fm.height()/2 - 2)
+            pos = QPointF(15, 8)
         else:
-            pos = QPointF(-label_width - 5, self.height/2 + fm.height()/2 - 2)
-# 
+            pos = QPointF(-label_width - 5, 8)
+
         painter.drawText(pos, self.label)
 
     def connectTo(self, other_port):

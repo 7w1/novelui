@@ -2,6 +2,7 @@ from nodes.node import Node
 from PyQt5.QtGui import QColor
 import base64
 import math
+import random
 
 class PromptBuilderNode(Node):
     def __init__(self, title="Prompt Builder", color="#330066"):
@@ -80,6 +81,8 @@ class PromptBuilderNode(Node):
             kwargs['image'] = base64.b64encode(image).decode('utf-8')
         if seed is not None:
             kwargs['seed'] = math.floor(seed)
+        else:
+            kwargs['seed'] = math.floor(random.random()*(2**32)-1)
         if extra_noise_seed is not None:
             kwargs['extra_noise_seed'] = math.floor(extra_noise_seed)
         if negative_prompt is not None:

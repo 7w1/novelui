@@ -1,18 +1,18 @@
 # NovelUI
 a node-based user-interface for NovelAI
 
-## Installation
-1. Download source code.
-2. Install python.
-3. Run `pip install -r requirements.txt` (you'll need to install more than whats listed, i haven't finished making this yet).
-4. Create a file called `.env` and add in the line `key='NOVELAI_TOKEN_HERE'`.
-5. Launch main.py
-6. If it crashes, run `pip install <package>` for all the missing stuff that aren't yet in the requirements file. You'll want to start the program from command prompt to see the error messages.
+## Installation (Windows, other platforms, you're on your own for now)
+1. Download source code and extract to a folder.
+2. Install Python 3.
+3. Open command prompt in the folder with `main.py`.
+4. Run `pip install -r requirements.txt` in command prompt.
+5. Create a file called `.env` and add in the line `key='NOVELAI_TOKEN_HERE'`.
+6. Run `python3 main.py` in command prompt.
+7. Profit. Ask me on discord if you have any questions.
 
-## Usage
+## Usage - Probably missing a lot.
 The top bar has lists of nodes.
-- Each node has some inputs and an output
-- Most should make sense, if you don't understand something spam me in a discord server somewhere. I'll write some actual documentation at a later date.
+- Each node has some inputs and an output, not all need to be filled. In the prompt builder every input/output (other than controlnet and img2img) has a default value.
 - Scroll, or use the slider at the bottom, to zoom in and out.
 - Press and hold M and you can move around the screen with your mouse.
 - Arrow keys move around the scene.
@@ -20,4 +20,5 @@ The top bar has lists of nodes.
 - Click an input node to delete its connection.
 - Select nodes by using your mouse to draw a selection or just click on one and press delete to delete it.
 - Selected nodes can also be moved around together.
-- Hit `Execute` at the top to run your script. It will freeze while executing (I never added multithreading), it should return to normal once its processed everything.
+- Hit `Execute` at the top to run your script. A window will popup with progress and logs.
+- Cluster nodes automatically detect the difference between two prompts and slowly transfer between them. The advanced does it with three. They do not support differences in input strings yet.

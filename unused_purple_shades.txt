@@ -1,11 +1,13 @@
-Eggplant: #614051
-Royal Purple: #6B3FA0
-Regalia: #522D80
-Amethyst: #9966CC
-Medium Purple: #9370DB
-Lavender: #E6E6FA
-Lilac: #C8A2C8
-Mauve: #E0B0FF
-Orchid: #DA70D6
-Thistle: #D8BFD8
-Wisteria: #C9A0DC
+For more node categories if i ever add them...
+
+#614051
+#6B3FA0
+#522D80
+#9966CC
+#9370DB
+#E6E6FA
+#C8A2C8
+#E0B0FF
+#DA70D6
+#D8BFD8
+#C9A0DC

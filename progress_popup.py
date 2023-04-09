@@ -1,7 +1,9 @@
-from PyQt5.QtCore import Qt, QMetaObject
+from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPalette, QColor
 from PyQt5.QtWidgets import QPushButton, QDialog, QProgressBar, QTextEdit, QVBoxLayout, QLabel, QStyle, QProxyStyle
 from math import floor
+
+# TODO: Figure out how to properly handle threading so this stuff works... pain.
 
 class CenteredProgressBarStyle(QProxyStyle):
     def drawControl(self, element, option, painter, widget=None):

@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-def annotate(model, image):
+def annotate(model, image, low_threshold: float=None, high_threshold: float=None, distance_threshold: float=None, value_threshold: float=None):
     url = "https://api.novelai.net/ai/annotate-image"
     headers = {
         "Authorization": f"Bearer {os.environ['key']}",
@@ -18,7 +18,24 @@ def annotate(model, image):
 
     image_b64 = base64.b64encode(image).decode('utf-8')
 
-    data = {"model": model, "parameters": {"image": image_b64}}
+    data = {
+        "model": model,
+        "parameters": {
+            "image": image_b64,
+        }
+    }
+
+    if low_threshold is not None:
+        data["parameters"]["low_threshold"] = low_threshold
+
+    if high_threshold is not None:
+        data["parameters"]["high_threshold"] = high_threshold
+
+    if distance_threshold is not None:
+        data["parameters"]["distance_threshold"] = distance_threshold
+
+    if value_threshold is not None:
+        data["parameters"]["value_threshold"] = value_threshold
 
     if 'image' in data['parameters']:
         data_copy = data.copy()
