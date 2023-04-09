@@ -3,7 +3,7 @@ import os
 import time
 from zipfile import ZipFile
 from io import BytesIO
-import base64
+import copy
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -93,12 +93,13 @@ def generate(input: str="masterpiece", action: str="generate", model: str="nai-d
         return
     
     if 'image' in data['parameters']:
-        data_copy = data.copy()
-        # data_copy['parameters']['image'] = '[image data]'
+        data_copy = copy.deepcopy(data)
+        data_copy['parameters']['image'] = '[image data]'
         data_str = f" and data: {data_copy}"
+
     elif 'controlnet_condition' in data['parameters']:
-        data_copy = data.copy()
-        # data_copy['parameters']['controlnet_condition'] = '[image data]'
+        data_copy = copy.deepcopy(data)
+        data_copy['parameters']['controlnet_condition'] = '[image data]'
         data_str = f" and data: {data_copy}"
     else:
         data_str = f" and data: {data}"

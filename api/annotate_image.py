@@ -2,6 +2,7 @@ import requests
 import os
 import time
 import base64
+import copy
 from io import BytesIO
 from zipfile import ZipFile
 
@@ -38,7 +39,7 @@ def annotate(model, image, low_threshold: float=None, high_threshold: float=None
         data["parameters"]["value_threshold"] = value_threshold
 
     if 'image' in data['parameters']:
-        data_copy = data.copy()
+        data_copy = copy.deepcopy(data)
         data_copy['image'] = '[image data]'
         data_str = f" and data: {data_copy}"
     else:
