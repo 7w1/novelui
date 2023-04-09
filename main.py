@@ -102,6 +102,7 @@ class MainWindow(QMainWindow):
         self.novelai_menu.addAction("ControlNet", lambda: self.create_node("ControlNet"))
         self.presets_menu = QMenu("Presets", self.novelai_menu)
         self.novelai_menu.addMenu(self.presets_menu)
+        self.presets_menu.addAction("Action Selection", lambda: self.create_node("Action"))
         self.presets_menu.addAction("ControlNet Models", lambda: self.create_node("ControlNet Models"))
         self.presets_menu.addAction("Image Generation Models", lambda: self.create_node("Image Generation Models"))
         self.presets_menu.addAction("Image Generation Samplers", lambda: self.create_node("Image Generation Samplers"))
