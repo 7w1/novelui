@@ -447,9 +447,9 @@ class GridSizeDialog(QDialog):
         self.height_edit = QLineEdit()
         
         layout = QVBoxLayout()
-        layout.addWidget(QLabel("Width:"))
+        layout.addWidget(QLabel("Columns:"))
         layout.addWidget(self.width_edit)
-        layout.addWidget(QLabel("Height:"))
+        layout.addWidget(QLabel("Rows:"))
         layout.addWidget(self.height_edit)
         
         button = QPushButton("OK")
@@ -459,7 +459,7 @@ class GridSizeDialog(QDialog):
         self.setLayout(layout)
         
     def get_grid_size(self):
-        return (int(self.width_edit.text()), int(self.height_edit.text()))
+        return (int(self.height_edit.text()), int(self.width_edit.text()))
     
 class ZipSizeDialog(QDialog):
     def __init__(self, parent=None):
