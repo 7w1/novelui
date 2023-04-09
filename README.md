@@ -13,6 +13,7 @@ a node-based user-interface for NovelAI
 ## Usage - Probably missing a lot.
 The top bar has lists of nodes.
 - Each node has some inputs and an output, not all need to be filled. In the prompt builder every input/output (other than controlnet and img2img) has a default value.
+- Each node has ports, the inputs and outputs, different shapes/colors indicate different types of data, but they are not all inclusive. Booleans are stored as ints, ints and floats are stored together, dictionaries are stored as strings, and the generic output node can display anything other than an image/zip file.
 - Scroll, or use the slider at the bottom, to zoom in and out.
 - Press and hold M and you can move around the screen with your mouse.
 - Arrow keys move around the scene.
