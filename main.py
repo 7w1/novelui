@@ -365,8 +365,8 @@ class MainWindow(QMainWindow):
         self.execute_script_action.setEnabled(True)
 
     def handle_error(self, error_message):
-        print(f"Error occurred: {error_message}")
         self.execute_script_action.setEnabled(True)
+        print(f"Error occurred: {error_message}")
 
     def _runScript(self):
         # Find the output node
