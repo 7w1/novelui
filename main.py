@@ -28,7 +28,7 @@ class MainWindow(QMainWindow):
 
         self.savinator = Savinator()
 
-        self.setWindowTitle("NovelUI for NovelAI | Pre Pre Pre Pre Alpha Build")
+        self.setWindowTitle("NovelUI for NovelAI | Alpha Build")
         self.setGeometry(100, 100, 800, 600)
 
         # Create the scene and view
