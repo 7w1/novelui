@@ -91,8 +91,12 @@ class ClusterGeneratorNode(Node):
             image_files.append(image_file)
 
             # Wait a bit so we don't overload the api since we're nice :P
-            print(f"Pausing for {endtime - starttime} seconds.")
-            time.sleep(endtime - starttime)
+            if endtime - starttime > 500:
+                pausetime = 10
+            else:
+                pausetime = endtime - starttime
+            print(f"Pausing for {pausetime} seconds.")
+            time.sleep(pausetime)
 
         # Create grid of images
         num_images = len(image_files)

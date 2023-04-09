@@ -2,6 +2,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from save_load import *
+from progress_popup import *
 from nodes.basic.operations import *
 from nodes.basic.input import *
 from nodes.basic.output import *
@@ -19,6 +20,7 @@ from nodes.novelai.prompt_builder import *
 from nodes.novelai.random_seed import *
 from nodes.novelai.controlnet.annotate_image import *
 from nodes.placeholder import *
+import sys
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -52,6 +54,8 @@ class MainWindow(QMainWindow):
         self.toolbar = QToolBar("Toolbar", self)
         self.addToolBar(self.toolbar)
 
+        # Create progress popup
+        self.progress_popup = ProgressPopup()
 
         self.image_menu = QMenu("Files", self)
         # self.image_menu.addAction("Save Node Layout", lambda: self.savinator.save())
@@ -123,6 +127,13 @@ class MainWindow(QMainWindow):
         self.zoom_slider.setTickInterval(10)
         self.zoom_slider.valueChanged.connect(self.zoom_view)
         self.statusBar().addWidget(self.zoom_slider)
+
+        # Custom console
+        self.console_stream = ConsoleStream(self.progress_popup.console_log)
+        sys.stdout = self.console_stream
+        
+        # Thread
+        self.thread = QThread()
 
     def zoom_view(self, value):
         factor = value / 100
@@ -294,9 +305,39 @@ class MainWindow(QMainWindow):
             event.accept()
 
         return super().eventFilter(obj, event)
-
-
+    
     def runScript(self):
+        # Disable start button to prevent multiple clicks
+        self.execute_script_action.setEnabled(False)
+
+        # Show progress dialog
+        self.progress_popup.show()
+
+        # Start worker thread
+        self.thread.start()
+
+        # Create a worker thread for the computeOutput() function
+        self.worker = Worker(self._runScript)
+
+        # Connect signals
+        self.worker.finished.connect(self.thread.quit)
+        self.worker.finished.connect(self.worker.deleteLater)
+        self.worker.finished.connect(self.on_worker_finished)
+        self.worker.progress.connect(self.progress_popup.update_progress)
+        self.worker.error.connect(self.handle_error)
+        self.worker.progress.connect(self.progress_popup.update_progress)
+
+        # Start worker thread
+        self.worker.start()
+
+    def on_worker_finished(self):
+        self.execute_script_action.setEnabled(True)
+
+    def handle_error(self, error_message):
+        print(f"Error occurred: {error_message}")
+        self.execute_script_action.setEnabled(True)
+
+    def _runScript(self):
         # Find the output node
         output_nodes = [node for node in self.scene.items() if isinstance(node, Node) and node.num_output_ports == 0]
         if not output_nodes:
@@ -312,7 +353,15 @@ class MainWindow(QMainWindow):
         for node in output_nodes:
             node.computeOutput()
 
+        # Progress updater
+        progress_percent = len(processed_nodes) / len(self.nodes) * 100
+        self.worker.progress.emit(progress_percent)
+
     def traverseNode(self, node, node_values, processed_nodes):
+        # Progress updater
+        progress_percent = len(processed_nodes) / len(self.nodes) * 100
+        self.worker.progress.emit(progress_percent)
+
         if node in processed_nodes:
             return
     
@@ -340,8 +389,23 @@ class MainWindow(QMainWindow):
     
         processed_nodes.add(node)
 
+class Worker(QThread):
+    finished = pyqtSignal()
+    progress = pyqtSignal(float)
+    error = pyqtSignal(str)
 
+    def __init__(self, function, *args, **kwargs):
+        super().__init__()
+        self.function = function
+        self.args = args
+        self.kwargs = kwargs
 
+    def run(self):
+        try:
+            self.function(*self.args, **self.kwargs)
+            self.finished.emit()
+        except Exception as e:
+            self.error.emit(str(e))
 
 class GridSizeDialog(QDialog):
     def __init__(self, parent=None):
