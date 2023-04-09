@@ -20,10 +20,22 @@ class ControlNetNode(Node):
     def computeOutput(self):
         model = self.input_ports[0].connections[0].output_port.value
         image = self.input_ports[1].connections[0].output_port.value
-        low_threshold = self.input_ports[2].connections[0].output_port.value
-        high_threshold = self.input_ports[3].connections[0].output_port.value
-        distance_threshold = self.input_ports[4].connections[0].output_port.value
-        value_threshold = self.input_ports[5].connections[0].output_port.value
+        try:
+            low_threshold = self.input_ports[2].connections[0].output_port.value
+        except:
+            low_threshold = None
+        try:
+            high_threshold = self.input_ports[3].connections[0].output_port.value
+        except:
+            high_threshold = None
+        try:
+            distance_threshold = self.input_ports[4].connections[0].output_port.value
+        except:
+            distance_threshold = None
+        try:
+            value_threshold = self.input_ports[5].connections[0].output_port.value
+        except:
+            value_threshold = None
 
         if model == 'hed' and low_threshold is not None and high_threshold is not None:
             zip = annotate(model, image, low_threshold=low_threshold, high_threshold=high_threshold)

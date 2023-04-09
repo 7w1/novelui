@@ -36,7 +36,7 @@ class ImageOpenNode(Node):
                 print("Error saving resized image:", e)
                 return None
 
-            self.image_data = output_buffer.getvalue()
+            self.image_data = output_buffer.getbuffer()
 
 
     def computeOutput(self):

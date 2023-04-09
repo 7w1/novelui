@@ -39,7 +39,6 @@ def generate(input: str="masterpiece", action: str="generate", model: str="nai-d
                 }
             }
         else:
-            controlnet_condition_b64 = base64.b64encode(controlnet_condition).decode('utf-8')
             data = {
                 "input": input,
                 "model": model,
@@ -56,7 +55,7 @@ def generate(input: str="masterpiece", action: str="generate", model: str="nai-d
                     "dynamic_thresholding": dynamic_thresholding,
                     "controlnet_strength": controlnet_strength,
                     "controlnet_model": controlnet_model,
-                    "controlnet_condition": controlnet_condition_b64,
+                    "controlnet_condition": controlnet_condition,
                     "legacy": legacy,
                     "seed": seed,
                     "negative_prompt": negative_prompt,
@@ -65,7 +64,6 @@ def generate(input: str="masterpiece", action: str="generate", model: str="nai-d
                 }
             }
     elif action == "img2img":
-        image_b64 = base64.b64encode(image).decode('utf-8')
         data = {
             "input": input,
             "model": model,
@@ -83,7 +81,7 @@ def generate(input: str="masterpiece", action: str="generate", model: str="nai-d
                 "sm_dyn": smea_dyn,
                 "dynamic_thresholding": dynamic_thresholding,
                 "legacy": legacy,
-                "image": image_b64,
+                "image": image,
                 "seed": seed,
                 "extra_noise_seed": extra_noise_seed,
                 "negative_prompt": negative_prompt,
@@ -96,11 +94,11 @@ def generate(input: str="masterpiece", action: str="generate", model: str="nai-d
     
     if 'image' in data['parameters']:
         data_copy = data.copy()
-        data_copy['parameters']['image'] = '[image data]'
+        # data_copy['parameters']['image'] = '[image data]'
         data_str = f" and data: {data_copy}"
     elif 'controlnet_condition' in data['parameters']:
         data_copy = data.copy()
-        data_copy['parameters']['controlnet_condition'] = '[image data]'
+        # data_copy['parameters']['controlnet_condition'] = '[image data]'
         data_str = f" and data: {data_copy}"
     else:
         data_str = f" and data: {data}"
