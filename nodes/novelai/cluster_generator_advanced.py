@@ -2,7 +2,6 @@ from PIL import Image, ImageDraw, ImageFont
 from nodes.node import Node
 from PyQt5.QtGui import QColor
 from api.generate_image import generate
-from PIL import Image
 from io import BytesIO
 import colorsys
 import time
