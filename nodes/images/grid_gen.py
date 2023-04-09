@@ -4,8 +4,6 @@ from PIL import Image
 from PyQt5.QtGui import QColor
 from nodes.node import Node
 
-# TODO: Fix this
-
 class ImageGridNode(Node):
     def __init__(self, title="Image Grid", color="#4B0082", grid_size=(2, 2)):
         super().__init__(title, QColor(color).darker(150), num_input_ports=1, num_output_ports=1, port_formats=["zip", "image"])
