@@ -48,10 +48,10 @@ class InputNode(Node):
         self.proxy = None  # don't restore the graphics proxy widget
 
 class DropdownNode(Node):
-    def __init__(self, title: str="Dropdown", color: str="#5F9EA0", options=[], values=[], export_type: str="int", label: str="output"):
+    def __init__(self, title: str="Dropdown", color: str="#5F9EA0", options=[], values=[], export_type: str="int", output: str="output"):
         super().__init__(title, QColor(color).darker(150), num_input_ports=0, num_output_ports=1, port_formats=[export_type])
 
-        self.output_ports[0].label = label
+        self.output_ports[0].label = output
         
         # Create the widget
         self.widget = QComboBox()
