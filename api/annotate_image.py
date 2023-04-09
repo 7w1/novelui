@@ -40,7 +40,7 @@ def annotate(model, image, low_threshold: float=None, high_threshold: float=None
 
     if 'image' in data['parameters']:
         data_copy = copy.deepcopy(data)
-        data_copy['image'] = '[image data]'
+        data_copy['parameters']['image'] = '[image data]'
         data_str = f" and data: {data_copy}"
     else:
         data_str = f" and data: {data}"

@@ -9,7 +9,7 @@ class ImageSaveNode(Node):
         super().__init__(title, QColor(color).darker(150), num_input_ports=1, num_output_ports=0, port_formats=["image"])
 
         # Create a button widget
-        self.button = QPushButton("Select Location")
+        self.button = QPushButton("Select Location is broken so dont use it check the output folder :P")
         self.button.clicked.connect(self.selectLocation)
 
         # Set up the graphics proxy widget
