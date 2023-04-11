@@ -13,9 +13,10 @@ from nodes.images.open import *
 from nodes.images.save import *
 from nodes.images.grid_gen import *
 from nodes.images.basic_resize import *
-from nodes.novelai.image_generator import *
-from nodes.novelai.cluster_generator import *
-from nodes.novelai.cluster_generator_advanced import *
+from nodes.novelai.generators.image_generator import *
+from nodes.novelai.generators.cluster_generator import *
+from nodes.novelai.generators.cluster_generator_advanced import *
+from nodes.novelai.upscaler import *
 from nodes.novelai.prompt_builder import *
 from nodes.novelai.random_seed import *
 from nodes.novelai.controlnet.annotate_image import *
@@ -28,7 +29,7 @@ class MainWindow(QMainWindow):
 
         self.savinator = Savinator()
 
-        self.setWindowTitle("NovelUI for NovelAI | Alpha Build")
+        self.setWindowTitle("NovelUI for NovelAI | Alpha Build 0.0.1a")
         self.setGeometry(100, 100, 800, 600)
 
         # Create the scene and view
@@ -98,8 +99,9 @@ class MainWindow(QMainWindow):
         self.novelai_menu.addAction("Generate Image Cluster Basic", lambda: self.create_node("Gen Cluster"))
         self.novelai_menu.addAction("Generate Image Cluster Advanced", lambda: self.create_node("Gen Cluster Adv"))
         self.novelai_menu.addAction("Prompt Builder", lambda: self.create_node("Prompt Builder"))
-        self.novelai_menu.addAction("Random Seed", lambda: self.create_node("Random Seed"))
+        self.novelai_menu.addAction("Upscale Image", lambda: self.create_node("Upscale Image"))
         self.novelai_menu.addAction("ControlNet", lambda: self.create_node("ControlNet"))
+        self.novelai_menu.addAction("Random Seed", lambda: self.create_node("Random Seed"))
         self.presets_menu = QMenu("Presets", self.novelai_menu)
         self.novelai_menu.addMenu(self.presets_menu)
         self.presets_menu.addAction("Action Selection", lambda: self.create_node("Action"))
@@ -249,6 +251,8 @@ class MainWindow(QMainWindow):
             node = DropdownNode(output="prompt string", title="Furry UC Prompts", options=["Low Quality", "None"], values=["nsfw, worst quality, low quality, what has science done, what, nightmare fuel, eldritch horror, where is your god now, why", "low res"], export_type="string")
         elif node_type == "Action":
             node = DropdownNode(output="action", title="Action", options=["generate", "img2img"], values=["generate", "img2img"], export_type="string")
+        elif node_type == "Upscale Image":
+            node = UpscaleNode()
         else:
             return
 
@@ -338,8 +342,9 @@ class MainWindow(QMainWindow):
         return super().eventFilter(obj, event)
     
     def runScript(self):
+        # TODO: do this once the execute button reenables correctly after crashes
         # Disable start button to prevent multiple clicks
-        self.execute_script_action.setEnabled(False)
+        # self.execute_script_action.setEnabled(False)
 
         # Show progress dialog
         self.progress_popup.show()

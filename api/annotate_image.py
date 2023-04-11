@@ -54,7 +54,7 @@ def annotate(model, image, low_threshold: float=None, high_threshold: float=None
     response = requests.post(url, headers=headers, json=data)
 
     generation_time = time.time() - start_time
-    print(f"Took {generation_time}s to generate image.")
+    print(f"Took {generation_time}s to annotate image.")
 
     try:
         image_zip = ZipFile(BytesIO(response.content))
