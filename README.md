@@ -1,4 +1,6 @@
 # NovelUI
+> **Note**
+> This is currently being remade for better ui and usability. The current version is still fully functional and will continue to recieve hotfixes for any bugs until I finish the new version.
 a node-based user-interface for NovelAI
 
 ## Installation (Windows, other platforms, you're on your own for now)
