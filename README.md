@@ -1,6 +1,10 @@
 # NovelUI
 > **Note**
 > This is currently being remade for better ui and usability. The current version is still fully functional and will continue to recieve hotfixes for any bugs until I finish the new version.
+> 
+> Finished: Image gen, save and load, node ui redesign.
+> 
+> Todo: Toolbar improvements, ControlNet, Image manipulation, settings window, tutorial, bug fixing.
 
 a node-based user-interface for NovelAI
 
