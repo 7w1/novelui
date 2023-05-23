@@ -1,6 +1,6 @@
 # NovelUI
 > **Note**
-> This is currently being remade for better ui and usability. The current version is still fully functional and will continue to recieve hotfixes for any bugs until I finish the new version.
+> This is currently being remade for better ui and usability. The current version is still fully functional and will continue to recieve hotfixes for any bugs until I finish the new version. Inpainting will only be added to the new version.
 > 
 > Finished: Image gen, save and load, node ui redesign.
 > 
